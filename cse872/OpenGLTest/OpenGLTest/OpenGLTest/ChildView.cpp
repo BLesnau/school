@@ -21,6 +21,7 @@ CChildView::CChildView()
 
 CChildView::~CChildView()
 {
+   delete m_cube;
 }
 
 BEGIN_MESSAGE_MAP(CChildView, CShaderWnd)
@@ -45,14 +46,11 @@ BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CChildView::InitGL()
 {
-   m_cube = new CCube(FALSE);
-   m_cube2 = new CCube(TRUE);
+   m_cube = new CCube();
 
    m_program = LoadShaders( "ShaderWnd/vertex.glsl", "ShaderWnd/fragment.glsl" );
 
    m_cube->InitGL();
-   m_cube2->InitGL();
-
 
    /* GLuint vao;
    glGenVertexArrays(1, &vao);
@@ -106,7 +104,6 @@ void CChildView::RenderGL()
    glUniform1f(glGetUniformLocation(m_program,"t"), m_fT);
 
    m_cube->RenderGL( m_program );
-   m_cube2->RenderGL( m_program );
    //glDrawArrays( GL_TRIANGLES, 0, NumVertices );
 
    //SwapBuffers( *(this->GetWindowDC()) );

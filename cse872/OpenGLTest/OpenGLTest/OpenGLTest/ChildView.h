@@ -16,7 +16,6 @@ protected:
    virtual void RenderGL();
 
    CCube* m_cube;
-   CCube* m_cube2;
 
    bool m_bTimer;
    int m_nTimer;

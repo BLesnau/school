@@ -6,28 +6,28 @@
 const int NumVertices = 36;
 
 // Vertices of a unit cube centered at origin, sides aligned with axes
-point4 vertex_positions[8] = {
-   point4( -0.5, -0.5,  0.5, 1.0 ),
-   point4( -0.5,  0.5,  0.5, 1.0 ),
-   point4(  0.5,  0.5,  0.5, 1.0 ),
-   point4(  0.5, -0.5,  0.5, 1.0 ),
-   point4( -0.5, -0.5, -0.5, 1.0 ),
-   point4( -0.5,  0.5, -0.5, 1.0 ),
-   point4(  0.5,  0.5, -0.5, 1.0 ),
-   point4(  0.5, -0.5, -0.5, 1.0 )
-};
-
-// Vertices of a unit cube centered at origin, sides aligned with axes
-point4 vertex_positions2[8] = {
-   point4( 0.5, 0.5,  1.5, 1.0 ),
-   point4( 0.5,  1.5,  1.5, 1.0 ),
-   point4(  1.5,  1.5,  1.5, 1.0 ),
-   point4(  1.5, 0.5,  1.5, 1.0 ),
-   point4( 0.5, 0.5, 0.5, 1.0 ),
-   point4( 0.5,  1.5, 0.5, 1.0 ),
-   point4(  1.5,  1.5, 0.5, 1.0 ),
-   point4(  1.5, 0.5, 0.5, 1.0 )
-};
+//point4 vertex_positions[8] = {
+//   point4( -m_e., -0.5,  0.5, 1.0 ),
+//   point4( -0.5,  0.5,  0.5, 1.0 ),
+//   point4(  0.5,  0.5,  0.5, 1.0 ),
+//   point4(  0.5, -0.5,  0.5, 1.0 ),
+//   point4( -0.5, -0.5, -0.5, 1.0 ),
+//   point4( -0.5,  0.5, -0.5, 1.0 ),
+//   point4(  0.5,  0.5, -0.5, 1.0 ),
+//   point4(  0.5, -0.5, -0.5, 1.0 )
+//};
+//
+//// Vertices of a unit cube centered at origin, sides aligned with axes
+//point4 vertex_positions2[8] = {
+//   point4( 0.5, 0.5,  1.5, 1.0 ),
+//   point4( 0.5,  1.5,  1.5, 1.0 ),
+//   point4(  1.5,  1.5,  1.5, 1.0 ),
+//   point4(  1.5, 0.5,  1.5, 1.0 ),
+//   point4( 0.5, 0.5, 0.5, 1.0 ),
+//   point4( 0.5,  1.5, 0.5, 1.0 ),
+//   point4(  1.5,  1.5, 0.5, 1.0 ),
+//   point4(  1.5, 0.5, 0.5, 1.0 )
+//};
 
 // RGBA colors
 color4 vertex_colors[8] = {
@@ -44,6 +44,17 @@ color4 vertex_colors[8] = {
 // quad() generates two triangles for each face and assigns colors to the vertices
 void CCube::Quad(int a, int b, int c, int d, int& index) 
 {
+   point4 vertex_positions[8] = {
+      point4( -m_e.x, -m_e.y,  m_e.z, 1.0 ),
+      point4( -m_e.x,  m_e.y,  m_e.z, 1.0 ),
+      point4(  m_e.x,  m_e.y,  m_e.z, 1.0 ),
+      point4(  m_e.x, -m_e.y,  m_e.z, 1.0 ),
+      point4( -m_e.x, -m_e.y, -m_e.z, 1.0 ),
+      point4( -m_e.x,  m_e.y, -m_e.z, 1.0 ),
+      point4(  m_e.x,  m_e.y, -m_e.z, 1.0 ),
+      point4(  m_e.x, -m_e.y, -m_e.z, 1.0 )
+   };
+
    vec3 u = vec3(vertex_positions[b]-vertex_positions[a]);	
    vec3 v = vec3(vertex_positions[c]-vertex_positions[a]);
    vec3 normal = vec3(normalize(cross(u,v)));
@@ -56,19 +67,19 @@ void CCube::Quad(int a, int b, int c, int d, int& index)
    m_normals[index] = normal; m_colors[index] = vertex_colors[d]; m_points[index] = vertex_positions[d]; index++;
 }
 
-void CCube::Quad2(int a, int b, int c, int d, int& index) 
-{
-   vec3 u = vec3(vertex_positions2[b]-vertex_positions2[a]);	
-   vec3 v = vec3(vertex_positions2[c]-vertex_positions2[a]);
-   vec3 normal = vec3(normalize(cross(u,v)));
-
-   m_normals[index] = normal; m_colors[index] = vertex_colors[a]; m_points[index] = vertex_positions2[a]; index++;
-   m_normals[index] = normal; m_colors[index] = vertex_colors[b]; m_points[index] = vertex_positions2[b]; index++;
-   m_normals[index] = normal; m_colors[index] = vertex_colors[c]; m_points[index] = vertex_positions2[c]; index++;
-   m_normals[index] = normal; m_colors[index] = vertex_colors[a]; m_points[index] = vertex_positions2[a]; index++;
-   m_normals[index] = normal; m_colors[index] = vertex_colors[c]; m_points[index] = vertex_positions2[c]; index++;
-   m_normals[index] = normal; m_colors[index] = vertex_colors[d]; m_points[index] = vertex_positions2[d]; index++;
-}
+//void CCube::Quad2(int a, int b, int c, int d, int& index) 
+//{
+//   vec3 u = vec3(vertex_positions2[b]-vertex_positions2[a]);	
+//   vec3 v = vec3(vertex_positions2[c]-vertex_positions2[a]);
+//   vec3 normal = vec3(normalize(cross(u,v)));
+//
+//   m_normals[index] = normal; m_colors[index] = vertex_colors[a]; m_points[index] = vertex_positions2[a]; index++;
+//   m_normals[index] = normal; m_colors[index] = vertex_colors[b]; m_points[index] = vertex_positions2[b]; index++;
+//   m_normals[index] = normal; m_colors[index] = vertex_colors[c]; m_points[index] = vertex_positions2[c]; index++;
+//   m_normals[index] = normal; m_colors[index] = vertex_colors[a]; m_points[index] = vertex_positions2[a]; index++;
+//   m_normals[index] = normal; m_colors[index] = vertex_colors[c]; m_points[index] = vertex_positions2[c]; index++;
+//   m_normals[index] = normal; m_colors[index] = vertex_colors[d]; m_points[index] = vertex_positions2[d]; index++;
+//}
 
 void CCube::ColorCube() 
 {
@@ -82,28 +93,57 @@ void CCube::ColorCube()
    Quad( 5, 4, 0, 1, index );
 }
 
-void CCube::ColorCube2() 
-{
-   int index = 0;
+//void CCube::ColorCube2() 
+//{
+//   int index = 0;
+//
+//   Quad2( 1, 0, 3, 2, index );
+//   Quad2( 2, 3, 7, 6, index );
+//   Quad2( 3, 0, 4, 7, index );
+//   Quad2( 6, 5, 1, 2, index );
+//   Quad2( 4, 5, 6, 7, index );
+//   Quad2( 5, 4, 0, 1, index );
+//}
 
-   Quad2( 1, 0, 3, 2, index );
-   Quad2( 2, 3, 7, 6, index );
-   Quad2( 3, 0, 4, 7, index );
-   Quad2( 6, 5, 1, 2, index );
-   Quad2( 4, 5, 6, 7, index );
-   Quad2( 5, 4, 0, 1, index );
+CCube::CCube()
+{
+   CCube( vec3( 0, 0, 0 ), vec3( 0, 0, 0 ), vec3( 1, 1, 1 ), 1.0f);
 }
 
-CCube::CCube(BOOL other)
+CCube::CCube( vec3 pos, vec3 rot, vec3 size, float mass )
 {
-   if(other)
-   {
-      ColorCube2();
-   }
-   else
-   {
-      ColorCube();
-   }
+   m_c = pos;
+   m_e = size;
+   m_e *= 0.5f;
+
+   m_rot = quat( rot );
+   normalize( m_rot );
+
+   m_mass = mass;
+   m_linVelocity = vec3( 0, 0, 0 );
+   m_angVelocity = vec3( 0, 0, 0 );
+
+   m_forces = vec3( 0, 0, 0 );
+   m_torques = vec3( 0, 0, 0 );
+
+
+   // If we want our objects to start awake or sleeping
+   //if (g_startSleeping)
+   //{
+   //   m_rwaMotion = g_sleepEpsilon;
+   //   m_awake = false;
+   //}
+   //else
+   //{
+   m_rwaMotion = 2 * g_sleepEpsilon;
+   //m_awake = true;
+   //}
+
+   m_radius = sqrtf(size.x*size.x + size.y*size.y + size.z*size.z) + 0.4f;
+
+   UpdateMatrix();
+
+   ColorCube();
 }
 
 CCube::~CCube()
@@ -162,4 +202,50 @@ void CCube::RenderGL( GLuint program )
    glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(m_points)) );
 
    glDrawArrays( GL_TRIANGLES, 0, NumVertices );
+}
+
+void CCube::UpdateVelocity( float dt )
+{
+
+}
+
+void CCube::UpdatePosition( float dt )
+{
+
+}
+
+void CCube::UpdateMatrix()
+{
+   mat4 matR = mat4_cast( m_rot );
+   
+   m_u[0] = vec4( 1, 0, 0, 1);
+   m_u[1] = vec4( 0, 1, 0, 1);
+   m_u[2] = vec4( 0, 0, 1, 1);
+   
+   m_u[0] = matR * m_u[0];
+   m_u[1] = matR * m_u[1];
+   m_u[2] = matR * m_u[2];
+   normalize( m_u[0] );
+   normalize( m_u[1] );
+   normalize( m_u[2] );
+
+   mat4 matT;
+   translate( matT, m_c );
+   m_matWorld = matR * matT;
+
+   vec3 size = m_e * 2.0f;
+   float x2 = (size.x * size.x);
+   float y2 = (size.y * size.y);
+   float z2 = (size.z * size.z);
+   float ix = (y2 + z2) * m_mass / 12.0f;
+   float iy = (x2 + z2) * m_mass / 12.0f;
+   float iz = (x2 + y2) * m_mass / 12.0f;
+
+   m_boxInertia = 
+      mat4( ix,   0,    0,    0,
+      0,    iy,   0,    0,
+      0,    0,    iz,   0,
+      0,    0,    0,    1);
+
+   m_invInertia = inverse(matR) * inverse(m_boxInertia) * matR;
 }
