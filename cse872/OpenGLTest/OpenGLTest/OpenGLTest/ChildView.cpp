@@ -96,6 +96,8 @@ void CChildView::InitGL()
 
 void CChildView::RenderGL()
 {
+   Step( m_fT );
+
    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
    glUniformMatrix4fv(m_nPVM, 1, GL_FALSE, value_ptr(m_mPVM));
@@ -103,10 +105,20 @@ void CChildView::RenderGL()
 
    glUniform1f(glGetUniformLocation(m_program,"t"), m_fT);
 
+
    m_cube->RenderGL( m_program );
    //glDrawArrays( GL_TRIANGLES, 0, NumVertices );
 
    //SwapBuffers( *(this->GetWindowDC()) );
+}
+
+void CChildView::Step( float dt )
+{
+   m_cube->UpdateVelocity( dt );
+
+   //ApplyImpulses
+
+   m_cube->UpdatePosition( dt );
 }
 
 void CChildView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -140,7 +152,8 @@ void CChildView::OnOperationTimer()
 
 void CChildView::OnTimer(UINT_PTR nIDEvent)
 {
-   m_fT += 0.04f;
+   //m_fT += 0.04f;
+   m_fT = 0.04f;
    InvalidateRect(NULL,FALSE);
 
    CShaderWnd::OnTimer(nIDEvent);

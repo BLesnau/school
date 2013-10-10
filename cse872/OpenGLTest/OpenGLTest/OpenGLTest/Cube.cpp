@@ -7,7 +7,7 @@ const int NumVertices = 36;
 
 // Vertices of a unit cube centered at origin, sides aligned with axes
 //point4 vertex_positions[8] = {
-//   point4( -m_e., -0.5,  0.5, 1.0 ),
+//   point4( -0.5, -0.5,  0.5, 1.0 ),
 //   point4( -0.5,  0.5,  0.5, 1.0 ),
 //   point4(  0.5,  0.5,  0.5, 1.0 ),
 //   point4(  0.5, -0.5,  0.5, 1.0 ),
@@ -107,10 +107,15 @@ void CCube::ColorCube()
 
 CCube::CCube()
 {
-   CCube( vec3( 0, 0, 0 ), vec3( 0, 0, 0 ), vec3( 1, 1, 1 ), 1.0f);
+   InitCube( vec3( 0, 0, 0 ), vec3( 0, 0, 0 ), vec3( 1, 1, 1 ), 1.0f);
 }
 
 CCube::CCube( vec3 pos, vec3 rot, vec3 size, float mass )
+{
+   InitCube( pos, rot, size, mass );
+}
+
+void CCube::InitCube( vec3 pos, vec3 rot, vec3 size, float mass )
 {
    m_c = pos;
    m_e = size;
@@ -121,11 +126,10 @@ CCube::CCube( vec3 pos, vec3 rot, vec3 size, float mass )
 
    m_mass = mass;
    m_linVelocity = vec3( 0, 0, 0 );
-   m_angVelocity = vec3( 0, 0, 0 );
+   m_angVelocity = vec4( 0, 0, 0, 0 );
 
    m_forces = vec3( 0, 0, 0 );
-   m_torques = vec3( 0, 0, 0 );
-
+   m_torques = vec4( 0, 0, 0, 0 );
 
    // If we want our objects to start awake or sleeping
    //if (g_startSleeping)
@@ -206,22 +210,54 @@ void CCube::RenderGL( GLuint program )
 
 void CCube::UpdateVelocity( float dt )
 {
+   //AddForce
+   auto gravity = vec3( 0, -9.8f * m_mass, 0 );
+   m_forces += gravity;
+   /*vec3 v3 = cross( (m_c - m_c), gravity );
+   vec3 v4( v3.x, v3.y, v3.z, 0);
+   m_torques += */
 
+   m_angVelocity += ((m_torques * m_invInertia) * dt);
+
+   m_linVelocity += ((m_forces / m_mass) * dt);
+
+   const float damping = 0.98f;
+   m_linVelocity *= powf(damping, dt);
+   m_angVelocity *= powf(damping, dt);
+
+   UpdateMatrix();
+
+   float motion =  dot(m_linVelocity, m_linVelocity) + dot(m_angVelocity, m_angVelocity);
+
+   float bias = 0.96f;
+   m_rwaMotion = bias*m_rwaMotion + (1-bias)*motion;
+   if (m_rwaMotion> 50.0f) m_rwaMotion = 5.0f;
 }
 
 void CCube::UpdatePosition( float dt )
 {
+   m_c += (m_linVelocity * dt);
 
+   vec4 angVel = m_angVelocity;
+
+   quat Qvel = 0.5f * m_rot * quat(angVel.x, angVel.y, angVel.z, 0);
+   m_rot = m_rot + (Qvel * dt);
+   normalize( m_rot );
+
+   m_forces	= vec3( 0, 0, 0 );
+   m_torques = vec4( 0, 0, 0, 0 );
+
+   UpdateMatrix();
 }
 
 void CCube::UpdateMatrix()
 {
    mat4 matR = mat4_cast( m_rot );
-   
-   m_u[0] = vec4( 1, 0, 0, 1);
-   m_u[1] = vec4( 0, 1, 0, 1);
-   m_u[2] = vec4( 0, 0, 1, 1);
-   
+
+   m_u[0] = vec4( 1, 0, 0, 0 );
+   m_u[1] = vec4( 0, 1, 0, 0 );
+   m_u[2] = vec4( 0, 0, 1, 0 );
+
    m_u[0] = matR * m_u[0];
    m_u[1] = matR * m_u[1];
    m_u[2] = matR * m_u[2];
@@ -232,6 +268,11 @@ void CCube::UpdateMatrix()
    mat4 matT;
    translate( matT, m_c );
    m_matWorld = matR * matT;
+
+   for( int i=0; i<NumVertices; i++ )
+   {
+      m_points[i] = m_matWorld * m_points[i];
+   }
 
    vec3 size = m_e * 2.0f;
    float x2 = (size.x * size.x);

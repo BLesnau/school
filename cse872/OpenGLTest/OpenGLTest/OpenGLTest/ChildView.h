@@ -14,6 +14,7 @@ protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
    virtual void InitGL();
    virtual void RenderGL();
+   void Step( float dt );
 
    CCube* m_cube;
 

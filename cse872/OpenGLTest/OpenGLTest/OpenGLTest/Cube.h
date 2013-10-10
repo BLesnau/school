@@ -31,14 +31,14 @@ public:
 
    float m_mass;
    mat4	m_boxInertia;
-   mat4	m_boxInvInertia;
+   mat3	m_boxInvInertia;
    mat4	m_invInertia;
 
    vec3  m_linVelocity;
-   vec3  m_angVelocity;
+   vec4  m_angVelocity;
 
    vec3  m_forces;
-   vec3  m_torques;
+   vec4  m_torques;
    float m_radius;	
    float m_rwaMotion;
 
@@ -50,7 +50,8 @@ private:
    //void ColorCube2();
 
    void UpdateMatrix();
-
+   void InitCube( vec3 pos, vec3 rot, vec3 size, float mass );
+  
    GLuint m_vao;
    GLuint m_buffer;
 
