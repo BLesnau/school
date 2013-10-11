@@ -126,7 +126,7 @@ void CCube::InitCube( vec3 pos, vec3 rot, vec3 size, float mass )
 
    m_mass = mass;
    m_linVelocity = vec3( 0, 0, 0 );
-   m_angVelocity = vec4( 1, 1, 1, 1 );
+   m_angVelocity = vec4( 0, 0, 0, 1 );
 
    m_forces = vec3( 0, 0, 0 );
    m_torques = vec4( 0, 0, 0, 1 );
@@ -212,7 +212,7 @@ void CCube::UpdateVelocity( float dt )
 {
    //AddForce
    auto gravity = vec3( 0, -9.8f * m_mass, 0 );
-   //m_forces += gravity;
+   m_forces += gravity;
    vec3 v3 = cross( (m_c - m_c), gravity );
    vec4 v4( v3.x, v3.y, v3.z, 0);
    m_torques = m_torques + v4;
@@ -260,7 +260,7 @@ void CCube::UpdatePosition( float dt )
    m_rot = normalize( m_rot );
 
    m_forces	= vec3( 0, 0, 0 );
-   m_torques = vec4( 0, 1, 0, 1 );
+   m_torques = vec4( 0, 0, 0, 1 );
 
    UpdateMatrix();
 }
@@ -284,7 +284,7 @@ void CCube::UpdateMatrix()
    matT[0].w = m_c.x;
    matT[1].w = m_c.y;
    matT[2].w = m_c.z;
-   m_matWorld = matR /** matT*/;
+   m_matWorld = matR * matT;
 
    for( int i=0; i<NumVertices; i++ )
    {
