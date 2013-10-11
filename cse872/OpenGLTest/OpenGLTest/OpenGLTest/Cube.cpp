@@ -107,7 +107,7 @@ void CCube::ColorCube()
 
 CCube::CCube()
 {
-   InitCube( vec3( 0, 0, 0 ), vec3( 0, 0, 0 ), vec3( 1, 1, 1 ), 1.0f);
+   InitCube( vec3( 0, 0, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 5.0f);
 }
 
 CCube::CCube( vec3 pos, vec3 rot, vec3 size, float mass )
@@ -122,14 +122,14 @@ void CCube::InitCube( vec3 pos, vec3 rot, vec3 size, float mass )
    m_e *= 0.5f;
 
    m_rot = quat( rot );
-   normalize( m_rot );
+   m_rot = normalize( m_rot );
 
    m_mass = mass;
    m_linVelocity = vec3( 0, 0, 0 );
-   m_angVelocity = vec4( 0, 0, 0, 0 );
+   m_angVelocity = vec4( 1, 1, 1, 1 );
 
    m_forces = vec3( 0, 0, 0 );
-   m_torques = vec4( 0, 0, 0, 0 );
+   m_torques = vec4( 0, 0, 0, 1 );
 
    // If we want our objects to start awake or sleeping
    //if (g_startSleeping)
@@ -212,10 +212,11 @@ void CCube::UpdateVelocity( float dt )
 {
    //AddForce
    auto gravity = vec3( 0, -9.8f * m_mass, 0 );
-   m_forces += gravity;
-   /*vec3 v3 = cross( (m_c - m_c), gravity );
-   vec3 v4( v3.x, v3.y, v3.z, 0);
-   m_torques += */
+   //m_forces += gravity;
+   vec3 v3 = cross( (m_c - m_c), gravity );
+   vec4 v4( v3.x, v3.y, v3.z, 0);
+   m_torques = m_torques + v4;
+   //dt=.05;
 
    m_angVelocity += ((m_torques * m_invInertia) * dt);
 
@@ -227,11 +228,11 @@ void CCube::UpdateVelocity( float dt )
 
    UpdateMatrix();
 
-   float motion =  dot(m_linVelocity, m_linVelocity) + dot(m_angVelocity, m_angVelocity);
+   /*float motion =  dot(m_linVelocity, m_linVelocity) + dot(m_angVelocity, m_angVelocity);
 
    float bias = 0.96f;
    m_rwaMotion = bias*m_rwaMotion + (1-bias)*motion;
-   if (m_rwaMotion> 50.0f) m_rwaMotion = 5.0f;
+   if (m_rwaMotion> 50.0f) m_rwaMotion = 5.0f;*/
 }
 
 void CCube::UpdatePosition( float dt )
@@ -240,12 +241,26 @@ void CCube::UpdatePosition( float dt )
 
    vec4 angVel = m_angVelocity;
 
-   quat Qvel = 0.5f * m_rot * quat(angVel.x, angVel.y, angVel.z, 0);
+   /*dt = .05;
+
+   angVel.x = 3;
+   angVel.y = 3;
+   angVel.z = 3;
+   angVel.w = 0;
+
+   m_rot.x = 2;
+   m_rot.y = 2;
+   m_rot.z = 2;
+   m_rot.w = 0;*/
+
+   quat Qvel = 0.5f * m_rot * quat(0, angVel.x, angVel.y, angVel.z);
+   //normalize(Qvel);
+   //normalize(m_rot);
    m_rot = m_rot + (Qvel * dt);
-   normalize( m_rot );
+   m_rot = normalize( m_rot );
 
    m_forces	= vec3( 0, 0, 0 );
-   m_torques = vec4( 0, 0, 0, 0 );
+   m_torques = vec4( 0, 1, 0, 1 );
 
    UpdateMatrix();
 }
@@ -254,24 +269,26 @@ void CCube::UpdateMatrix()
 {
    mat4 matR = mat4_cast( m_rot );
 
-   m_u[0] = vec4( 1, 0, 0, 0 );
-   m_u[1] = vec4( 0, 1, 0, 0 );
-   m_u[2] = vec4( 0, 0, 1, 0 );
+   m_u[0] = vec4( 1, 0, 0, 1 );
+   m_u[1] = vec4( 0, 1, 0, 1 );
+   m_u[2] = vec4( 0, 0, 1, 1 );
 
    m_u[0] = matR * m_u[0];
    m_u[1] = matR * m_u[1];
    m_u[2] = matR * m_u[2];
-   normalize( m_u[0] );
-   normalize( m_u[1] );
-   normalize( m_u[2] );
+   m_u[0] = normalize( m_u[0] );
+   m_u[1] = normalize( m_u[1] );
+   m_u[2] = normalize( m_u[2] );
 
    mat4 matT;
-   translate( matT, m_c );
-   m_matWorld = matR * matT;
+   matT[0].w = m_c.x;
+   matT[1].w = m_c.y;
+   matT[2].w = m_c.z;
+   m_matWorld = matR /** matT*/;
 
    for( int i=0; i<NumVertices; i++ )
    {
-      m_points[i] = m_matWorld * m_points[i];
+      m_points[i] = m_points[i] * m_matWorld;
    }
 
    vec3 size = m_e * 2.0f;
@@ -287,6 +304,14 @@ void CCube::UpdateMatrix()
       0,    iy,   0,    0,
       0,    0,    iz,   0,
       0,    0,    0,    1);
+
+   m_rot.x = 0;
+   m_rot.y = 0;
+   m_rot.z = 0;
+   m_rot.w = 1;
+
+   /*auto inv = inverse(matR);
+   auto inv2 = inverse(m_boxInertia);*/
 
    m_invInertia = inverse(matR) * inverse(m_boxInertia) * matR;
 }

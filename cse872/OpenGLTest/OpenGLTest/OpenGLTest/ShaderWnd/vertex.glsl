@@ -9,7 +9,7 @@ uniform float t;
 void main(){
 	color = vColor;
 	gl_Position = mPVM * vPosition;
-	gl_Position.x += t;
+	//gl_Position.x += t;
 }
 
 /*
