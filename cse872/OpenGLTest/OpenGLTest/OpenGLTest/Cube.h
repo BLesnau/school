@@ -55,6 +55,7 @@ private:
    GLuint m_vao;
    GLuint m_buffer;
 
+   point4   m_origPoints[36];
    point4   m_points[36];
    color4   m_colors[36];
    vec3     m_normals[36];

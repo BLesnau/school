@@ -21,7 +21,12 @@ CChildView::CChildView()
 
 CChildView::~CChildView()
 {
-   delete m_cube;
+   for( int i=0; i<m_cubes.size(); i++ )
+   {
+      delete m_cubes.at( i );
+   }
+
+   m_cubes.clear();
 }
 
 BEGIN_MESSAGE_MAP(CChildView, CShaderWnd)
@@ -46,11 +51,17 @@ BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CChildView::InitGL()
 {
-   m_cube = new CCube();
+   CCube* cube = new CCube();
+   CCube* bottomCube = new CCube( vec3( 0, -2, 0 ), vec3( 0, 0, 0 ), vec3( 10, .1, 10 ), 5.0f );
+   m_cubes.push_back( cube );
+   m_cubes.push_back( bottomCube );
 
    m_program = LoadShaders( "ShaderWnd/vertex.glsl", "ShaderWnd/fragment.glsl" );
 
-   m_cube->InitGL();
+   for( int i=0; i<m_cubes.size(); i++ )
+   {
+      m_cubes.at( i )->InitGL();
+   }
 
    /* GLuint vao;
    glGenVertexArrays(1, &vao);
@@ -106,7 +117,10 @@ void CChildView::RenderGL()
    glUniform1f(glGetUniformLocation(m_program,"t"), m_fT);
 
 
-   m_cube->RenderGL( m_program );
+   for( int i=0; i<m_cubes.size(); i++ )
+   {
+      m_cubes.at( i )->RenderGL( m_program );
+   }
    //glDrawArrays( GL_TRIANGLES, 0, NumVertices );
 
    //SwapBuffers( *(this->GetWindowDC()) );
@@ -114,11 +128,17 @@ void CChildView::RenderGL()
 
 void CChildView::Step( float dt )
 {
-   m_cube->UpdateVelocity( dt );
+   for( int i=0; i<m_cubes.size(); i++ )
+   {
+      m_cubes.at( i )->UpdateVelocity( dt );
+   }
 
    //ApplyImpulses
 
-   m_cube->UpdatePosition( dt );
+   for( int i=0; i<m_cubes.size(); i++ )
+   {
+      m_cubes.at( i )->UpdatePosition( dt );
+   }
 }
 
 void CChildView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)

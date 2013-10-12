@@ -65,6 +65,11 @@ void CCube::Quad(int a, int b, int c, int d, int& index)
    m_normals[index] = normal; m_colors[index] = vertex_colors[a]; m_points[index] = vertex_positions[a]; index++;
    m_normals[index] = normal; m_colors[index] = vertex_colors[c]; m_points[index] = vertex_positions[c]; index++;
    m_normals[index] = normal; m_colors[index] = vertex_colors[d]; m_points[index] = vertex_positions[d]; index++;
+
+   for( int i = 0; i<NumVertices; i++ )
+   {
+      m_origPoints[i] = m_points[i];
+   }
 }
 
 //void CCube::Quad2(int a, int b, int c, int d, int& index) 
@@ -107,7 +112,7 @@ void CCube::ColorCube()
 
 CCube::CCube()
 {
-   InitCube( vec3( 0, 0, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 5.0f);
+   InitCube( vec3( 0, 1, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 5.0f );
 }
 
 CCube::CCube( vec3 pos, vec3 rot, vec3 size, float mass )
@@ -153,35 +158,6 @@ void CCube::InitCube( vec3 pos, vec3 rot, vec3 size, float mass )
 CCube::~CCube()
 {
 }
-
-//void CCube::InitGL( GLuint& program )
-//{
-//   GLuint vao;
-//   glGenVertexArrays(1, &vao);
-//   glBindVertexArray(vao);
-//
-//   GLuint buffer;
-//   glGenBuffers( 1, &buffer );
-//   glBindBuffer( GL_ARRAY_BUFFER, buffer );
-//   glBufferData( GL_ARRAY_BUFFER, sizeof(m_points) + sizeof(m_colors), NULL, GL_STATIC_DRAW );
-//   glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(m_points), m_points );
-//   glBufferSubData( GL_ARRAY_BUFFER, sizeof(m_points), sizeof(m_colors), m_colors );
-//
-//   GLuint vPosition = glGetAttribLocation( program, "vPosition" );
-//   glEnableVertexAttribArray( vPosition );
-//   glVertexAttribPointer( vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0) );
-//   GLuint vColor = glGetAttribLocation( program, "vColor" );
-//   glEnableVertexAttribArray( vColor );
-//   glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(m_points)) );
-//}
-//
-//void CCube::RenderGL( GLuint program  )
-//{
-//
-//   
-//
-//   glDrawArrays( GL_TRIANGLES, 0, NumVertices );
-//}
 
 void CCube::InitGL()
 {
@@ -288,7 +264,7 @@ void CCube::UpdateMatrix()
 
    for( int i=0; i<NumVertices; i++ )
    {
-      m_points[i] = m_points[i] * m_matWorld;
+      m_points[i] = m_origPoints[i] * m_matWorld;
    }
 
    vec3 size = m_e * 2.0f;
@@ -304,14 +280,6 @@ void CCube::UpdateMatrix()
       0,    iy,   0,    0,
       0,    0,    iz,   0,
       0,    0,    0,    1);
-
-   m_rot.x = 0;
-   m_rot.y = 0;
-   m_rot.z = 0;
-   m_rot.w = 1;
-
-   /*auto inv = inverse(matR);
-   auto inv2 = inverse(m_boxInertia);*/
 
    m_invInertia = inverse(matR) * inverse(m_boxInertia) * matR;
 }

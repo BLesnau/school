@@ -16,7 +16,7 @@ protected:
    virtual void RenderGL();
    void Step( float dt );
 
-   CCube* m_cube;
+   vector<CCube*> m_cubes;
 
    bool m_bTimer;
    int m_nTimer;
