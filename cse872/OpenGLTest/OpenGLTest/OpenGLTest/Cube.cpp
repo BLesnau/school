@@ -5,30 +5,6 @@
 
 const int NumVertices = 36;
 
-// Vertices of a unit cube centered at origin, sides aligned with axes
-//point4 vertex_positions[8] = {
-//   point4( -0.5, -0.5,  0.5, 1.0 ),
-//   point4( -0.5,  0.5,  0.5, 1.0 ),
-//   point4(  0.5,  0.5,  0.5, 1.0 ),
-//   point4(  0.5, -0.5,  0.5, 1.0 ),
-//   point4( -0.5, -0.5, -0.5, 1.0 ),
-//   point4( -0.5,  0.5, -0.5, 1.0 ),
-//   point4(  0.5,  0.5, -0.5, 1.0 ),
-//   point4(  0.5, -0.5, -0.5, 1.0 )
-//};
-//
-//// Vertices of a unit cube centered at origin, sides aligned with axes
-//point4 vertex_positions2[8] = {
-//   point4( 0.5, 0.5,  1.5, 1.0 ),
-//   point4( 0.5,  1.5,  1.5, 1.0 ),
-//   point4(  1.5,  1.5,  1.5, 1.0 ),
-//   point4(  1.5, 0.5,  1.5, 1.0 ),
-//   point4( 0.5, 0.5, 0.5, 1.0 ),
-//   point4( 0.5,  1.5, 0.5, 1.0 ),
-//   point4(  1.5,  1.5, 0.5, 1.0 ),
-//   point4(  1.5, 0.5, 0.5, 1.0 )
-//};
-
 // RGBA colors
 color4 vertex_colors[8] = {
    color4( 0.0, 0.0, 0.0, 1.0 ),  // black
@@ -72,20 +48,6 @@ void CCube::Quad(int a, int b, int c, int d, int& index)
    }
 }
 
-//void CCube::Quad2(int a, int b, int c, int d, int& index) 
-//{
-//   vec3 u = vec3(vertex_positions2[b]-vertex_positions2[a]);	
-//   vec3 v = vec3(vertex_positions2[c]-vertex_positions2[a]);
-//   vec3 normal = vec3(normalize(cross(u,v)));
-//
-//   m_normals[index] = normal; m_colors[index] = vertex_colors[a]; m_points[index] = vertex_positions2[a]; index++;
-//   m_normals[index] = normal; m_colors[index] = vertex_colors[b]; m_points[index] = vertex_positions2[b]; index++;
-//   m_normals[index] = normal; m_colors[index] = vertex_colors[c]; m_points[index] = vertex_positions2[c]; index++;
-//   m_normals[index] = normal; m_colors[index] = vertex_colors[a]; m_points[index] = vertex_positions2[a]; index++;
-//   m_normals[index] = normal; m_colors[index] = vertex_colors[c]; m_points[index] = vertex_positions2[c]; index++;
-//   m_normals[index] = normal; m_colors[index] = vertex_colors[d]; m_points[index] = vertex_positions2[d]; index++;
-//}
-
 void CCube::ColorCube() 
 {
    int index = 0;
@@ -98,30 +60,20 @@ void CCube::ColorCube()
    Quad( 5, 4, 0, 1, index );
 }
 
-//void CCube::ColorCube2() 
-//{
-//   int index = 0;
-//
-//   Quad2( 1, 0, 3, 2, index );
-//   Quad2( 2, 3, 7, 6, index );
-//   Quad2( 3, 0, 4, 7, index );
-//   Quad2( 6, 5, 1, 2, index );
-//   Quad2( 4, 5, 6, 7, index );
-//   Quad2( 5, 4, 0, 1, index );
-//}
-
 CCube::CCube()
 {
-   InitCube( vec3( 0, 1, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 5.0f );
+   InitCube( vec3( 0, 1, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 5.0f, FALSE );
 }
 
-CCube::CCube( vec3 pos, vec3 rot, vec3 size, float mass )
+CCube::CCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bStatic )
 {
-   InitCube( pos, rot, size, mass );
+   InitCube( pos, rot, size, mass, bStatic );
 }
 
-void CCube::InitCube( vec3 pos, vec3 rot, vec3 size, float mass )
+void CCube::InitCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bStatic )
 {
+   m_bStatic = bStatic;
+
    m_c = pos;
    m_e = size;
    m_e *= 0.5f;
@@ -186,21 +138,22 @@ void CCube::RenderGL( GLuint program )
 
 void CCube::UpdateVelocity( float dt )
 {
-   //AddForce
-   auto gravity = vec3( 0, -9.8f * m_mass, 0 );
-   m_forces += gravity;
-   vec3 v3 = cross( (m_c - m_c), gravity );
-   vec4 v4( v3.x, v3.y, v3.z, 0);
-   m_torques = m_torques + v4;
-   //dt=.05;
+   if( !m_bStatic )
+   {
+      auto gravity = vec3( 0, -9.8f * m_mass, 0 );
+      m_forces += gravity;
+      vec3 v3 = cross( (m_c - m_c), gravity );
+      vec4 v4( v3.x, v3.y, v3.z, 0);
+      m_torques = m_torques + v4;
 
-   m_angVelocity += ((m_torques * m_invInertia) * dt);
+      m_angVelocity += ((m_torques * m_invInertia) * dt);
 
-   m_linVelocity += ((m_forces / m_mass) * dt);
+      m_linVelocity += ((m_forces / m_mass) * dt);
 
-   const float damping = 0.98f;
-   m_linVelocity *= powf(damping, dt);
-   m_angVelocity *= powf(damping, dt);
+      const float damping = 0.98f;
+      m_linVelocity *= powf(damping, dt);
+      m_angVelocity *= powf(damping, dt);
+   }
 
    UpdateMatrix();
 
@@ -213,30 +166,19 @@ void CCube::UpdateVelocity( float dt )
 
 void CCube::UpdatePosition( float dt )
 {
-   m_c += (m_linVelocity * dt);
+   if( !m_bStatic )
+   {
+      m_c += (m_linVelocity * dt);
 
-   vec4 angVel = m_angVelocity;
+      vec4 angVel = m_angVelocity;
 
-   /*dt = .05;
+      quat Qvel = 0.5f * m_rot * quat(0, angVel.x, angVel.y, angVel.z);
+      m_rot = m_rot + (Qvel * dt);
+      m_rot = normalize( m_rot );
 
-   angVel.x = 3;
-   angVel.y = 3;
-   angVel.z = 3;
-   angVel.w = 0;
-
-   m_rot.x = 2;
-   m_rot.y = 2;
-   m_rot.z = 2;
-   m_rot.w = 0;*/
-
-   quat Qvel = 0.5f * m_rot * quat(0, angVel.x, angVel.y, angVel.z);
-   //normalize(Qvel);
-   //normalize(m_rot);
-   m_rot = m_rot + (Qvel * dt);
-   m_rot = normalize( m_rot );
-
-   m_forces	= vec3( 0, 0, 0 );
-   m_torques = vec4( 0, 0, 0, 1 );
+      m_forces	= vec3( 0, 0, 0 );
+      m_torques = vec4( 0, 0, 0, 1 );
+   }
 
    UpdateMatrix();
 }
