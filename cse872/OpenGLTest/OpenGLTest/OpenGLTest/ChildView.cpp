@@ -53,8 +53,8 @@ void CChildView::InitGL()
 {
    CCube* cube = new CCube();
    CCube* bottomCube = new CCube( vec3( 0, -2, 0 ), vec3( 0, 0, 0 ), vec3( 10, .1, 10 ), 5.0f, TRUE );
-   m_cubes.push_back( cube );
-   m_cubes.push_back( bottomCube );
+   AddCube( cube );
+   AddCube( bottomCube );
 
    m_program = LoadShaders( "ShaderWnd/vertex.glsl", "ShaderWnd/fragment.glsl" );
 
@@ -87,6 +87,8 @@ void CChildView::RenderGL()
 
 void CChildView::Step( float dt )
 {
+   m_colManager.DetectCollisions();
+
    for( int i=0; i<m_cubes.size(); i++ )
    {
       m_cubes.at( i )->UpdateVelocity( dt );
@@ -135,4 +137,10 @@ void CChildView::OnTimer(UINT_PTR nIDEvent)
    InvalidateRect(NULL,FALSE);
 
    CShaderWnd::OnTimer(nIDEvent);
+}
+
+void CChildView::AddCube( CCube* cube )
+{
+   m_cubes.push_back( cube );
+   m_colManager.AddCube( cube );
 }

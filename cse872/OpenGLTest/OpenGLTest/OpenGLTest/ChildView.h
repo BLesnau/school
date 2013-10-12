@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ShaderWnd\ShaderWnd.h"
+#include "CollisionManager.h"
 
 class CCube;
 
@@ -15,8 +16,10 @@ protected:
    virtual void InitGL();
    virtual void RenderGL();
    void Step( float dt );
+   void AddCube( CCube* cube );
 
    vector<CCube*> m_cubes;
+   CCollisionManager m_colManager;
 
    bool m_bTimer;
    int m_nTimer;
