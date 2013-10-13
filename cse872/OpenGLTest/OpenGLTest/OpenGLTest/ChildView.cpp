@@ -51,7 +51,8 @@ BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CChildView::InitGL()
 {
-   CCube* cube = new CCube( vec3( 0, 1, 0 ), vec3( 1, 1, 1 ), vec3( 2, 2, 2 ), 5.0f, FALSE  );
+   CCube* cube = new CCube( vec3( 0, 1, 0 ), vec3( 1, 0, 0 ), vec3( 2, 2, 2 ), 5.0f );
+   //CCube* cube = new CCube( vec3( 0, -0.3, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 5.0f );
    CCube* bottomCube = new CCube( vec3( 0, -2, 0 ), vec3( 0, 0, 0 ), vec3( 10, 1, 10 ), 100000, TRUE );
    AddCube( cube );
    AddCube( bottomCube );
