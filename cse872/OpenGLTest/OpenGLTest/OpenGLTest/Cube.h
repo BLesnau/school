@@ -22,6 +22,8 @@ public:
    void UpdateVelocity( float dt );
    void UpdatePosition( float dt );
 
+   static void AddCollisionImpulse(CCube* cube1, CCube* cube2, vec3 &hitPoint, vec3 &normal, float dt, float penetration);
+
    vec3  m_c;	   // Center Of Cube
    vec4  m_u[3];	// Local x-y-z Axes
    vec3  m_e;	   // Positive halfwidths along each axis
@@ -48,7 +50,7 @@ private:
 
    void UpdateMatrix();
    void InitCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bStatic );
-  
+
    GLuint m_vao;
    GLuint m_buffer;
 

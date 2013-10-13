@@ -51,8 +51,8 @@ BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CChildView::InitGL()
 {
-   CCube* cube = new CCube();
-   CCube* bottomCube = new CCube( vec3( 0, -2, 0 ), vec3( 0, 0, 0 ), vec3( 10, .1, 10 ), 5.0f, TRUE );
+   CCube* cube = new CCube( vec3( 0, 1, 0 ), vec3( 1, 1, 1 ), vec3( 2, 2, 2 ), 5.0f, FALSE  );
+   CCube* bottomCube = new CCube( vec3( 0, -2, 0 ), vec3( 0, 0, 0 ), vec3( 10, 1, 10 ), 100000, TRUE );
    AddCube( cube );
    AddCube( bottomCube );
 
@@ -85,6 +85,8 @@ void CChildView::RenderGL()
    }
 }
 
+int g_numIterations = 7;
+
 void CChildView::Step( float dt )
 {
    m_colManager.DetectCollisions();
@@ -94,7 +96,10 @@ void CChildView::Step( float dt )
       m_cubes.at( i )->UpdateVelocity( dt );
    }
 
-   //ApplyImpulses
+   for (int i=0; i<g_numIterations; i++)
+   {
+      m_colManager.ApplyImpulses(dt);
+   }
 
    for( int i=0; i<m_cubes.size(); i++ )
    {
@@ -127,13 +132,13 @@ void CChildView::OnOperationTimer()
    {
       m_bTimer = true;
       m_fT = 0.f;
-      m_nTimer = SetTimer(1, 40, NULL);
+      m_nTimer = SetTimer(1, 10, NULL);
    }
 }
 
 void CChildView::OnTimer(UINT_PTR nIDEvent)
 {
-   m_fT = 0.04f;
+   m_fT = 0.01f;
    InvalidateRect(NULL,FALSE);
 
    CShaderWnd::OnTimer(nIDEvent);
