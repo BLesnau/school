@@ -64,30 +64,7 @@ void CChildView::InitGL()
 
    SetupScene( 1 );
 
-   /*float angle = M_PI_4;
-   vec3 axis = vec3( 1, 0, 0 );
-   m_mRotation = rotate(mat4(1.f), angle, axis);
-   m_mModel = m_mRotation * m_mModel;
-   UpdateMatrix();*/
-
-   /*quat cameraR = quat(0, M_PI_4, 0, 0);
-   m_mRotation = mat4_cast( cameraR );
-   m_mModel = m_mRotation * m_mModel;
-   m_mRotation = mat4(1.f);*/
-
-   /*AddCube( vec3( 0, 2, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 1.0f );
-   AddCube( vec3( 0, -2, 0 ), vec3( 0, 0, 0 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
-   AddCube( vec3( -15.25, 13.25, 0 ), vec3( 0, 0, M_PI_2 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
-   AddCube( vec3( 0, 13.25, -15.25 ), vec3( 0, M_PI_2, M_PI_2 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
-   AddCube( vec3( 15.25, 13.25, 0 ), vec3( 0, 0, -M_PI_2 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
-   AddCube( vec3( 0, 13.25, 15.25 ), vec3( 0, -M_PI_2, M_PI_2 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );*/
-
    m_program = LoadShaders( "ShaderWnd/vertex.glsl", "ShaderWnd/fragment.glsl" );
-
-   /*for( int i=0; i<m_cubes.size(); i++ )
-   {
-   m_cubes.at( i )->InitGL();
-   }*/
 
    m_nPVM = glGetUniformLocation(m_program, "mPVM");
 
@@ -373,6 +350,8 @@ void CChildView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
    case VK_LEFT:
    case VK_RIGHT:
    case VK_SPACE:
+   case 'C':
+   case 'c':
    case 'q':
    case 'Q':
    case 'w':
@@ -402,6 +381,8 @@ void CChildView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
    case VK_LEFT:
    case VK_RIGHT:
    case VK_SPACE:
+   case 'C':
+   case 'c':
    case 'q':
    case 'Q':
    case 'w':
@@ -463,6 +444,10 @@ void CChildView::OnTimer(UINT_PTR nIDEvent)
    if( m_keysPressed[VK_SPACE] )
    {
       m_cubes[0]->m_linVelocity.y += linSpeed * m_fT;
+   }
+   if( m_keysPressed['c'] || m_keysPressed['C'] )
+   {
+      m_cubes[0]->m_linVelocity.y -= linSpeed * m_fT;
    }
    if( m_keysPressed['q'] || m_keysPressed['Q'] )
    {
