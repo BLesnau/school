@@ -160,30 +160,36 @@ void CCube::InitGL()
 
 void CCube::RenderGL( GLuint program )
 {
+   int arraySize = 7;
+   if( !m_bShowOneSide )
+   {
+      arraySize = 36;
+   }
+
    glBindVertexArray( m_vao );
    glBindBuffer( GL_ARRAY_BUFFER, m_buffer );
 
    glEnable( GL_CULL_FACE );
    glCullFace( GL_BACK );
 
-   glBufferData( GL_ARRAY_BUFFER, sizeof(m_points) + sizeof(m_colors), NULL, GL_STATIC_DRAW );
-   glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(m_points), m_points );
-   glBufferSubData( GL_ARRAY_BUFFER, sizeof(m_points), sizeof(m_colors), m_colors );
+   glBufferData( GL_ARRAY_BUFFER, arraySize * (sizeof(point4) + sizeof(color4)), NULL, GL_STATIC_DRAW );
+   glBufferSubData( GL_ARRAY_BUFFER, 0, arraySize * sizeof(point4), m_points );
+   glBufferSubData( GL_ARRAY_BUFFER, arraySize * sizeof(point4), arraySize * sizeof(color4), m_colors );
 
    GLuint vPosition = glGetAttribLocation( program, "vPosition" );
    glEnableVertexAttribArray( vPosition );
    glVertexAttribPointer( vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0) );
    GLuint vColor = glGetAttribLocation( program, "vColor" );
    glEnableVertexAttribArray( vColor );
-   glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(m_points)) );
+   glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(arraySize * sizeof(point4)) );
 
    if( m_bShowOneSide )
    {
-      glDrawArrays( GL_LINE_LOOP, 0, NumVertices );
+      glDrawArrays( GL_LINE_LOOP, 0, arraySize );
    }
    else
    {
-      glDrawArrays( GL_TRIANGLES, 0, NumVertices );
+      glDrawArrays( GL_TRIANGLES, 0, arraySize );
    }
 }
 
