@@ -194,6 +194,7 @@ void CChildView::SetupScene( int sceneConfig )
    AddCube( vec3( 0, 15.5, -17.5 ), vec3( 0, M_PI_2, M_PI_2 ), vec3( 30, 5, 30 ), 100000, TRUE, TRUE );
    AddCube( vec3( 17.5, 15.5, 0 ), vec3( 0, 0, -M_PI_2 ), vec3( 30, 5, 30 ), 100000, TRUE, TRUE );
    AddCube( vec3( 0, 15.5, 17.5 ), vec3( 0, -M_PI_2, M_PI_2 ), vec3( 30, 5, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( 0, 33, 0 ), vec3( M_PI, M_PI, 0 ), vec3( 30, 5, 30 ), 100000, TRUE, TRUE );
 
    for( int i=0; i<m_cubes.size(); i++ )
    {
