@@ -13,7 +13,7 @@ class CCube
 {
 public:
    CCube();
-   CCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bStatic = FALSE );
+   CCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bShowOneSide = FALSE, BOOL bStatic = FALSE );
    ~CCube();
 
    void InitGL();
@@ -50,7 +50,7 @@ private:
    void ColorCube();
 
    void UpdateMatrix();
-   void InitCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bStatic );
+   void InitCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bShowOneSide, BOOL bStatic );
 
    GLuint m_vao;
    GLuint m_buffer;
@@ -61,4 +61,5 @@ private:
    vec3     m_normals[36];
 
    BOOL m_bStatic;
+   BOOL m_bShowOneSide;
 };

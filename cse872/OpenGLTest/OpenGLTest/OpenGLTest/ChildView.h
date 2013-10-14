@@ -17,6 +17,7 @@ protected:
    virtual void RenderGL();
    void Step( float dt );
    void AddCube( CCube* cube );
+   void AddCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bShowOneSide = FALSE, BOOL bStatic = FALSE );
    void UpdateSleepingObjects();
 
    vector<CCube*> m_cubes;

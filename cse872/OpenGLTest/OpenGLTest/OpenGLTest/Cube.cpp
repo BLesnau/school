@@ -57,26 +57,33 @@ void CCube::ColorCube()
 {
    int index = 0;
 
+   Quad( 6, 5, 1, 2, index );
+
+   if( m_bShowOneSide )
+   {
+      return;
+   }
+
    Quad( 1, 0, 3, 2, index );
    Quad( 2, 3, 7, 6, index );
    Quad( 3, 0, 4, 7, index );
-   Quad( 6, 5, 1, 2, index );
    Quad( 4, 5, 6, 7, index );
    Quad( 5, 4, 0, 1, index );
 }
 
 CCube::CCube()
 {
-   InitCube( vec3( 0, 0, 0 ), vec3( 0, 0, 0 ), vec3( 0, 0, 0 ), 1.0f, FALSE );
+   InitCube( vec3( 0, 0, 0 ), vec3( 0, 0, 0 ), vec3( 0, 0, 0 ), 1.0f, FALSE, FALSE );
 }
 
-CCube::CCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bStatic )
+CCube::CCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bShowOneSide, BOOL bStatic )
 {
-   InitCube( pos, rot, size, mass, bStatic );
+   InitCube( pos, rot, size, mass, bShowOneSide, bStatic );
 }
 
-void CCube::InitCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bStatic )
+void CCube::InitCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bShowOneSide, BOOL bStatic )
 {
+   m_bShowOneSide = bShowOneSide;
    m_bStatic = bStatic;
 
    m_c = pos;

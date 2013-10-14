@@ -51,10 +51,25 @@ BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CChildView::InitGL()
 {
-   CCube* cube = new CCube( vec3( 0, 2, 0 ), vec3( 2, 2, 2 ), vec3( 2, 2, 2 ), 1.0f );
-   CCube* bottomCube = new CCube( vec3( 0, -2, 0 ), vec3( 0, 0, 0 ), vec3( 10, 1, 10 ), 100000, TRUE );
-   AddCube( cube );
-   AddCube( bottomCube );
+   m_vCenter.z -= 35;
+
+   /*float angle = M_PI_4;
+   vec3 axis = vec3( 1, 0, 0 );
+   m_mRotation = rotate(mat4(1.f), angle, axis);
+   m_mModel = m_mRotation * m_mModel;
+   UpdateMatrix();*/
+
+   /*quat cameraR = quat(0, M_PI_4, 0, 0);
+   m_mRotation = mat4_cast( cameraR );
+   m_mModel = m_mRotation * m_mModel;
+   m_mRotation = mat4(1.f);*/
+
+   AddCube( vec3( 0, 2, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 1.0f );
+   AddCube( vec3( 0, -2, 0 ), vec3( 0, 0, 0 ), vec3( 30, .1, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( -15.05, 13.05, 0 ), vec3( 0, 0, M_PI_2 ), vec3( 30, .1, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( 0, 13.05, -15.05 ), vec3( 0, M_PI_2, M_PI_2 ), vec3( 30, .1, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( 15.05, 13.05, 0 ), vec3( 0, 0, -M_PI_2 ), vec3( 30, .1, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( 0, 13.05, 15.05 ), vec3( 0, -M_PI_2, M_PI_2 ), vec3( 30, .1, 30 ), 100000, TRUE, TRUE );
 
    m_program = LoadShaders( "ShaderWnd/vertex.glsl", "ShaderWnd/fragment.glsl" );
 
@@ -67,6 +82,12 @@ void CChildView::InitGL()
 
    glClearColor( 0.0, 0.0, 0.0, 1.0 );
    glEnable( GL_DEPTH_TEST );
+}
+
+void CChildView::AddCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bShowOneSide, BOOL bStatic )
+{
+   auto pCube = new CCube( pos, rot, size, mass, bShowOneSide, bStatic );
+   AddCube( pCube );
 }
 
 void CChildView::RenderGL()
