@@ -754,3 +754,9 @@ void CCollisionManager::AddCollision( CCube* cube1, CCube* cube2, vec3 &point, v
    cp->points.push_back( p );
    cp->numPoints++;
 }
+
+void CCollisionManager::Clear()
+{
+   m_collisionsArray.clear();
+   m_cubes.clear();
+}

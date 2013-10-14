@@ -313,7 +313,7 @@ void CCube::AddCollisionImpulse( CCube* cube1, CCube* cube2, vec3 &hitPoint, vec
 
    // Works out the bias to prevent Prevents sinking!
    const float allowedPenetration = 0.1f;
-   const float biasFactor = 0.1f; // 0.1 to 0.3
+   const float biasFactor = 0.3f; // 0.1 to 0.3
    float biasFactorValue = g_positionCorrection ? biasFactor : 0.0f;
 
    float inv_dt = dt > 0.0f ? 1.0f / dt : 0.0f;

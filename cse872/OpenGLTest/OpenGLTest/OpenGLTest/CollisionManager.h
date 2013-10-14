@@ -42,6 +42,7 @@ public:
    void AddCube(CCube* cube);
    void DetectCollisions();
    void ApplyImpulses( float dt );
+   void Clear();
 
    static float Clamp(float v, float min, float max);
 

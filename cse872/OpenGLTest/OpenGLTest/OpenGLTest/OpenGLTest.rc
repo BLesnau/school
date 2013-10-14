@@ -122,8 +122,16 @@ BEGIN
     END
     POPUP "&Operation"
     BEGIN
-        MENUITEM "&Timer",                      ID_OPERATION_TIMER
-        MENUITEM "&Shoot Cube",                 ID_OPERATION_SHOOTCUBE
+        MENUITEM "&Shoot Cube (Z)",             ID_OPERATION_SHOOTCUBE
+        MENUITEM "&Reset (R)",                  ID_OPERATION_RESET
+    END
+    POPUP "&Configurations"
+    BEGIN
+        MENUITEM "Small Pyramid (1)",           ID_CONFIGURATIONS_SMALLPYRAMID
+        MENUITEM "Single Cube (2)",             ID_CONFIGURATIONS_SINGLECUBE
+        MENUITEM "Medium Pyramid (3)",          ID_CONFIGURATIONS_MEDIUMPYRAMID
+        MENUITEM "Large Pyramid (4)",           ID_CONFIGURATIONS_LARGEPYRAMID
+        MENUITEM "Teeter-totter (5)",           ID_CONFIGURATIONS_TEETER
     END
 END
 

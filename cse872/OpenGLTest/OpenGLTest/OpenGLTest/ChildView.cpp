@@ -17,6 +17,7 @@ CChildView::CChildView()
    m_bTimer = false;
    m_nTimer = 0;
    m_fT = 0.f;
+   m_sceneConfig = 1;
 }
 
 CChildView::~CChildView()
@@ -35,6 +36,11 @@ BEGIN_MESSAGE_MAP(CChildView, CShaderWnd)
    ON_WM_TIMER()
    ON_COMMAND(ID_OPERATION_TIMER, &CChildView::OnOperationTimer)
    ON_COMMAND(ID_OPERATION_SHOOTCUBE, &CChildView::OnOperationShootcube)
+   ON_COMMAND(ID_CONFIGURATIONS_SMALLPYRAMID, &CChildView::OnConfigurationsSmallPyramid)
+   ON_COMMAND(ID_CONFIGURATIONS_SINGLECUBE, &CChildView::OnConfigurationsSingleCube)
+   ON_COMMAND(ID_CONFIGURATIONS_MEDIUMPYRAMID, &CChildView::OnConfigurationsMediumPyramid)
+   ON_COMMAND(ID_CONFIGURATIONS_LARGEPYRAMID, &CChildView::OnConfigurationsLargePyramid)
+   ON_COMMAND(ID_CONFIGURATIONS_TEETER, &CChildView::OnConfigurationsTeeter)
 END_MESSAGE_MAP()
 
 BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs) 
@@ -54,6 +60,8 @@ void CChildView::InitGL()
 {
    m_vCenter.z -= 35;
 
+   SetupScene( 1 );
+
    /*float angle = M_PI_4;
    vec3 axis = vec3( 1, 0, 0 );
    m_mRotation = rotate(mat4(1.f), angle, axis);
@@ -65,24 +73,123 @@ void CChildView::InitGL()
    m_mModel = m_mRotation * m_mModel;
    m_mRotation = mat4(1.f);*/
 
-   AddCube( vec3( 0, 2, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 1.0f );
+   /*AddCube( vec3( 0, 2, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 1.0f );
    AddCube( vec3( 0, -2, 0 ), vec3( 0, 0, 0 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
    AddCube( vec3( -15.25, 13.25, 0 ), vec3( 0, 0, M_PI_2 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
    AddCube( vec3( 0, 13.25, -15.25 ), vec3( 0, M_PI_2, M_PI_2 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
    AddCube( vec3( 15.25, 13.25, 0 ), vec3( 0, 0, -M_PI_2 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
-   AddCube( vec3( 0, 13.25, 15.25 ), vec3( 0, -M_PI_2, M_PI_2 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( 0, 13.25, 15.25 ), vec3( 0, -M_PI_2, M_PI_2 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );*/
 
    m_program = LoadShaders( "ShaderWnd/vertex.glsl", "ShaderWnd/fragment.glsl" );
 
-   for( int i=0; i<m_cubes.size(); i++ )
+   /*for( int i=0; i<m_cubes.size(); i++ )
    {
       m_cubes.at( i )->InitGL();
-   }
+   }*/
 
    m_nPVM = glGetUniformLocation(m_program, "mPVM");
 
    glClearColor( 0.0, 0.0, 0.0, 1.0 );
    glEnable( GL_DEPTH_TEST );
+
+   OnOperationTimer();
+}
+
+void CChildView::SetupScene( int sceneConfig )
+{
+   m_sceneConfig = sceneConfig;
+   m_cubes.clear();
+   m_colManager.Clear();
+
+   switch( m_sceneConfig )
+   {
+   case 1:
+      {
+         AddCube( vec3( 0, 5, 10 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         AddCube( vec3( -4, 5, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 0, 5, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 4, 5, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         AddCube( vec3( -2, 7, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 2, 7, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         AddCube( vec3( 0, 9, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         break;
+      }
+   case 2:
+      {
+         AddCube( vec3( 0, 5, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         break;
+      }
+   case 3:
+      {
+         AddCube( vec3( 0, 5, 10 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         AddCube( vec3( -6, 5, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( -2, 5, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 2, 5, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 6, 5, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         AddCube( vec3( -4, 7, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 0, 7, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 4, 7, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         AddCube( vec3( -2, 9, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 2, 9, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         AddCube( vec3( 0, 11, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         break;
+      }
+   case 4:
+      {
+         AddCube( vec3( 0, 5, 10 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         AddCube( vec3( -8, 5, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( -4, 5, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 0, 5, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 4, 5, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 8, 5, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         AddCube( vec3( -6, 7, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( -2, 7, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 2, 7, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 6, 7, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         AddCube( vec3( -4, 9, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 0, 9, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 4, 9, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         AddCube( vec3( -2, 11, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+         AddCube( vec3( 2, 11, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         AddCube( vec3( 0, 13, 0 ), vec3( 0, M_PI_4, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         break;
+      }
+   case 5:
+      {
+         break;
+      }
+   default:
+      {
+         break;
+      }
+   }
+
+   AddCube( vec3( 0, -2, 0 ), vec3( 0, 0, 0 ), vec3( 30, 5, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( -17.5, 15.5, 0 ), vec3( 0, 0, M_PI_2 ), vec3( 30, 5, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( 0, 15.5, -17.5 ), vec3( 0, M_PI_2, M_PI_2 ), vec3( 30, 5, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( 17.5, 15.5, 0 ), vec3( 0, 0, -M_PI_2 ), vec3( 30, 5, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( 0, 15.5, 17.5 ), vec3( 0, -M_PI_2, M_PI_2 ), vec3( 30, 5, 30 ), 100000, TRUE, TRUE );
+
+   for( int i=0; i<m_cubes.size(); i++ )
+   {
+      m_cubes.at( i )->InitGL();
+   }
 }
 
 void CChildView::AddCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bShowOneSide, BOOL bStatic )
@@ -216,7 +323,7 @@ void CChildView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
    {
    case 'r':
    case 'R':
-      //ResetMatrix();
+      SetupScene( m_sceneConfig );
       break;
    case VK_UP:
       {
@@ -279,6 +386,37 @@ void CChildView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
          m_cubes[0]->m_angVelocity.z -= 1;
          break;
       }
+   case 'z':
+   case 'Z':
+      {
+         OnOperationShootcube();
+         break;
+      }
+   case '1':
+      {
+         SetupScene( 1 );
+         break;
+      }
+   case '2':
+      {
+         SetupScene( 2 );
+         break;
+      }
+   case '3':
+      {
+         SetupScene( 3 );
+         break;
+      }
+   case '4':
+      {
+         SetupScene( 4 );
+         break;
+      }
+   case '5':
+      {
+         SetupScene( 5 );
+         break;
+      }
    }
 
    CShaderWnd::OnKeyDown(nChar, nRepCnt, nFlags);
@@ -315,11 +453,32 @@ void CChildView::AddCube( CCube* cube )
 
 void CChildView::OnOperationShootcube()
 {
-   AddCube( vec3( 0, 15, 0 ), vec3( M_PI_4, M_PI_4, M_PI_4 ), vec3( 2, 2, 2 ), 1.0f );
+   CCube* cube = new CCube( vec3( 0, 15, 0 ), vec3( M_PI_4, M_PI_4, M_PI_4 ), vec3( 2, 2, 2 ), 5.0f );
+   AddCube(cube);
+   //cube->InitGL();
+}
 
-   //auto rot = quat_cast(m_mView);
-   /*CCube* pCube = new CCube( m_vCenter, vec3( 0,0,0 ), vec3( 2, 2, 2 ), 1.0f );
-   pCube->m_c = vec3(m_mView * vec4(m_vEye));
-   pCube->m_rot = quat_cast( m_mRotation );
-   AddCube( pCube );*/
+void CChildView::OnConfigurationsSmallPyramid()
+{
+   SetupScene( 1 );
+}
+
+void CChildView::OnConfigurationsSingleCube()
+{
+   SetupScene( 2 );
+}
+
+void CChildView::OnConfigurationsMediumPyramid()
+{
+   SetupScene( 3 );
+}
+
+void CChildView::OnConfigurationsLargePyramid()
+{
+   SetupScene( 4 );
+}
+
+void CChildView::OnConfigurationsTeeter()
+{
+   SetupScene( 5 );
 }
