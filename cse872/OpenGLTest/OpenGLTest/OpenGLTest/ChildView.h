@@ -2,6 +2,7 @@
 
 #include "ShaderWnd\ShaderWnd.h"
 #include "CollisionManager.h"
+#include <map>
 
 class CCube;
 
@@ -30,9 +31,12 @@ protected:
 
    int m_sceneConfig;
 
+   std::map<UINT, BOOL> m_keysPressed;
+
 protected:
 	DECLARE_MESSAGE_MAP()
    afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+   afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
    afx_msg void OnOperationTimer();
    afx_msg void OnTimer(UINT_PTR nIDEvent);
    afx_msg void OnOperationShootcube();

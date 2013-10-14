@@ -33,6 +33,7 @@ CChildView::~CChildView()
 BEGIN_MESSAGE_MAP(CChildView, CShaderWnd)
    ON_WM_PAINT()
    ON_WM_KEYDOWN()
+   ON_WM_KEYUP()
    ON_WM_TIMER()
    ON_COMMAND(ID_OPERATION_TIMER, &CChildView::OnOperationTimer)
    ON_COMMAND(ID_OPERATION_SHOOTCUBE, &CChildView::OnOperationShootcube)
@@ -84,7 +85,7 @@ void CChildView::InitGL()
 
    /*for( int i=0; i<m_cubes.size(); i++ )
    {
-      m_cubes.at( i )->InitGL();
+   m_cubes.at( i )->InitGL();
    }*/
 
    m_nPVM = glGetUniformLocation(m_program, "mPVM");
@@ -323,67 +324,8 @@ void CChildView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
    {
    case 'r':
    case 'R':
-      SetupScene( m_sceneConfig );
-      break;
-   case VK_UP:
       {
-         m_cubes[0]->m_linVelocity.z -= 1;
-         break;
-      }
-   case VK_DOWN:
-      {
-         m_cubes[0]->m_linVelocity.z += 1;
-         break;
-      }
-   case VK_LEFT:
-      {
-         m_cubes[0]->m_linVelocity.x -= 1;
-         break;
-      }
-   case VK_RIGHT:
-      {
-         m_cubes[0]->m_linVelocity.x += 1;
-         break;
-      }
-   case VK_SPACE:
-      {
-         m_cubes[0]->m_linVelocity.y += 1;
-         break;
-      }
-   case 'q':
-   case 'Q':
-      {
-         m_cubes[0]->m_angVelocity.x += 1;
-         break;
-      }
-   case 'w':
-   case 'W':
-      {
-         m_cubes[0]->m_angVelocity.y += 1;
-         break;
-      }
-   case 'e':
-   case 'E':
-      {
-         m_cubes[0]->m_angVelocity.z += 1;
-         break;
-      }
-   case 'a':
-   case 'A':
-      {
-         m_cubes[0]->m_angVelocity.x -= 1;
-         break;
-      }
-   case 's':
-   case 'S':
-      {
-         m_cubes[0]->m_angVelocity.y -= 1;
-         break;
-      }
-   case 'd':
-   case 'D':
-      {
-         m_cubes[0]->m_angVelocity.z -= 1;
+         SetupScene( m_sceneConfig );
          break;
       }
    case 'z':
@@ -417,9 +359,58 @@ void CChildView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
          SetupScene( 5 );
          break;
       }
+   case VK_UP:
+   case VK_DOWN:
+   case VK_LEFT:
+   case VK_RIGHT:
+   case VK_SPACE:
+   case 'q':
+   case 'Q':
+   case 'w':
+   case 'W':
+   case 'e':
+   case 'E':
+   case 'a':
+   case 'A':
+   case 's':
+   case 'S':
+   case 'd':
+   case 'D':
+      {
+         m_keysPressed[nChar] = TRUE;
+      }
    }
 
    CShaderWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+void CChildView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+   switch(nChar)
+   {
+   case VK_UP:
+   case VK_DOWN:
+   case VK_LEFT:
+   case VK_RIGHT:
+   case VK_SPACE:
+   case 'q':
+   case 'Q':
+   case 'w':
+   case 'W':
+   case 'e':
+   case 'E':
+   case 'a':
+   case 'A':
+   case 's':
+   case 'S':
+   case 'd':
+   case 'D':
+      {
+         m_keysPressed[nChar] = FALSE;
+      }
+   }
+
+   CShaderWnd::OnKeyUp(nChar, nRepCnt, nFlags);
 }
 
 void CChildView::OnOperationTimer()
@@ -441,6 +432,53 @@ void CChildView::OnTimer(UINT_PTR nIDEvent)
 {
    m_fT = 0.02f;
    InvalidateRect(NULL,FALSE);
+   float angSpeed = 40.0f;
+   float linSpeed = 30.0f;
+
+   if( m_keysPressed[VK_UP] )
+   {
+      m_cubes[0]->m_linVelocity.z -= linSpeed * m_fT;
+   }
+   if( m_keysPressed[VK_DOWN] )
+   {
+      m_cubes[0]->m_linVelocity.z += linSpeed * m_fT;
+   }
+   if( m_keysPressed[VK_LEFT] )
+   {
+      m_cubes[0]->m_linVelocity.x -= linSpeed * m_fT;
+   }
+   if( m_keysPressed[VK_RIGHT] )
+   {
+      m_cubes[0]->m_linVelocity.x += linSpeed * m_fT;
+   }
+   if( m_keysPressed[VK_SPACE] )
+   {
+      m_cubes[0]->m_linVelocity.y += linSpeed * m_fT;
+   }
+   if( m_keysPressed['q'] || m_keysPressed['Q'] )
+   {
+      m_cubes[0]->m_angVelocity.x += angSpeed * m_fT;
+   }
+   if( m_keysPressed['w'] || m_keysPressed['W'] )
+   {
+      m_cubes[0]->m_angVelocity.y += angSpeed * m_fT;
+   }
+   if( m_keysPressed['e'] || m_keysPressed['E'] )
+   {
+      m_cubes[0]->m_angVelocity.z += angSpeed * m_fT;
+   }
+   if( m_keysPressed['a'] || m_keysPressed['A'] )
+   {
+      m_cubes[0]->m_angVelocity.x -= angSpeed * m_fT;
+   }
+   if( m_keysPressed['s'] || m_keysPressed['S'] )
+   {
+      m_cubes[0]->m_angVelocity.y -= angSpeed * m_fT;
+   }
+   if( m_keysPressed['d'] || m_keysPressed['D'] )
+   {
+      m_cubes[0]->m_angVelocity.z -= angSpeed * m_fT;
+   }
 
    CShaderWnd::OnTimer(nIDEvent);
 }
