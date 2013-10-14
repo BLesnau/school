@@ -45,6 +45,8 @@ public:
    float m_rwaMotion;
    bool  m_awake;
 
+   BOOL m_bStatic;
+
 private:
    void Quad(int a, int b, int c, int d, int& index);
    void ColorCube();
@@ -60,6 +62,5 @@ private:
    color4   m_colors[36];
    vec3     m_normals[36];
 
-   BOOL m_bStatic;
    BOOL m_bShowOneSide;
 };

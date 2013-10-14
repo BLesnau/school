@@ -123,6 +123,7 @@ BEGIN
     POPUP "&Operation"
     BEGIN
         MENUITEM "&Timer",                      ID_OPERATION_TIMER
+        MENUITEM "&Shoot Cube",                 ID_OPERATION_SHOOTCUBE
     END
 END
 

@@ -32,5 +32,6 @@ protected:
    afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
    afx_msg void OnOperationTimer();
    afx_msg void OnTimer(UINT_PTR nIDEvent);
+   afx_msg void OnOperationShootcube();
 };
 

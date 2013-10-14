@@ -34,6 +34,7 @@ BEGIN_MESSAGE_MAP(CChildView, CShaderWnd)
    ON_WM_KEYDOWN()
    ON_WM_TIMER()
    ON_COMMAND(ID_OPERATION_TIMER, &CChildView::OnOperationTimer)
+   ON_COMMAND(ID_OPERATION_SHOOTCUBE, &CChildView::OnOperationShootcube)
 END_MESSAGE_MAP()
 
 BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs) 
@@ -65,11 +66,11 @@ void CChildView::InitGL()
    m_mRotation = mat4(1.f);*/
 
    AddCube( vec3( 0, 2, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 1.0f );
-   AddCube( vec3( 0, -2, 0 ), vec3( 0, 0, 0 ), vec3( 30, .1, 30 ), 100000, TRUE, TRUE );
-   AddCube( vec3( -15.05, 13.05, 0 ), vec3( 0, 0, M_PI_2 ), vec3( 30, .1, 30 ), 100000, TRUE, TRUE );
-   AddCube( vec3( 0, 13.05, -15.05 ), vec3( 0, M_PI_2, M_PI_2 ), vec3( 30, .1, 30 ), 100000, TRUE, TRUE );
-   AddCube( vec3( 15.05, 13.05, 0 ), vec3( 0, 0, -M_PI_2 ), vec3( 30, .1, 30 ), 100000, TRUE, TRUE );
-   AddCube( vec3( 0, 13.05, 15.05 ), vec3( 0, -M_PI_2, M_PI_2 ), vec3( 30, .1, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( 0, -2, 0 ), vec3( 0, 0, 0 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( -15.25, 13.25, 0 ), vec3( 0, 0, M_PI_2 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( 0, 13.25, -15.25 ), vec3( 0, M_PI_2, M_PI_2 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( 15.25, 13.25, 0 ), vec3( 0, 0, -M_PI_2 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
+   AddCube( vec3( 0, 13.25, 15.25 ), vec3( 0, -M_PI_2, M_PI_2 ), vec3( 30, .5, 30 ), 100000, TRUE, TRUE );
 
    m_program = LoadShaders( "ShaderWnd/vertex.glsl", "ShaderWnd/fragment.glsl" );
 
@@ -191,7 +192,7 @@ void CChildView::Step( float dt )
 {
    m_colManager.DetectCollisions();
 
-   UpdateSleepingObjects();
+   //UpdateSleepingObjects();
 
    for( int i=0; i<m_cubes.size(); i++ )
    {
@@ -217,6 +218,67 @@ void CChildView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
    case 'R':
       //ResetMatrix();
       break;
+   case VK_UP:
+      {
+         m_cubes[0]->m_linVelocity.z -= 1;
+         break;
+      }
+   case VK_DOWN:
+      {
+         m_cubes[0]->m_linVelocity.z += 1;
+         break;
+      }
+   case VK_LEFT:
+      {
+         m_cubes[0]->m_linVelocity.x -= 1;
+         break;
+      }
+   case VK_RIGHT:
+      {
+         m_cubes[0]->m_linVelocity.x += 1;
+         break;
+      }
+   case VK_SPACE:
+      {
+         m_cubes[0]->m_linVelocity.y += 1;
+         break;
+      }
+   case 'q':
+   case 'Q':
+      {
+         m_cubes[0]->m_angVelocity.x += 1;
+         break;
+      }
+   case 'w':
+   case 'W':
+      {
+         m_cubes[0]->m_angVelocity.y += 1;
+         break;
+      }
+   case 'e':
+   case 'E':
+      {
+         m_cubes[0]->m_angVelocity.z += 1;
+         break;
+      }
+   case 'a':
+   case 'A':
+      {
+         m_cubes[0]->m_angVelocity.x -= 1;
+         break;
+      }
+   case 's':
+   case 'S':
+      {
+         m_cubes[0]->m_angVelocity.y -= 1;
+         break;
+      }
+   case 'd':
+   case 'D':
+      {
+         m_cubes[0]->m_angVelocity.z -= 1;
+         break;
+      }
    }
 
    CShaderWnd::OnKeyDown(nChar, nRepCnt, nFlags);
@@ -233,13 +295,13 @@ void CChildView::OnOperationTimer()
    {
       m_bTimer = true;
       m_fT = 0.f;
-      m_nTimer = SetTimer(1, 10, NULL);
+      m_nTimer = SetTimer(1, 20, NULL);
    }
 }
 
 void CChildView::OnTimer(UINT_PTR nIDEvent)
 {
-   m_fT = 0.01f;
+   m_fT = 0.02f;
    InvalidateRect(NULL,FALSE);
 
    CShaderWnd::OnTimer(nIDEvent);
@@ -249,4 +311,15 @@ void CChildView::AddCube( CCube* cube )
 {
    m_cubes.push_back( cube );
    m_colManager.AddCube( cube );
+}
+
+void CChildView::OnOperationShootcube()
+{
+   AddCube( vec3( 0, 15, 0 ), vec3( M_PI_4, M_PI_4, M_PI_4 ), vec3( 2, 2, 2 ), 1.0f );
+
+   //auto rot = quat_cast(m_mView);
+   /*CCube* pCube = new CCube( m_vCenter, vec3( 0,0,0 ), vec3( 2, 2, 2 ), 1.0f );
+   pCube->m_c = vec3(m_mView * vec4(m_vEye));
+   pCube->m_rot = quat_cast( m_mRotation );
+   AddCube( pCube );*/
 }

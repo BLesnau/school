@@ -54,6 +54,11 @@ void CCollisionManager::ApplyImpulses( float dt )
       CCube* cube2				= cp->box1;
       int numPoints			= cp->numPoints;
 
+      if( cube1->m_bStatic && cube1->m_bStatic )
+      {
+         continue;
+      }
+
       for (int k=0; k<numPoints; k++)
       {
 
