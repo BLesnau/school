@@ -46,5 +46,6 @@ public:
    afx_msg void OnConfigurationsMediumPyramid();
    afx_msg void OnConfigurationsLargePyramid();
    afx_msg void OnConfigurationsTeeter();
+   afx_msg void OnOperationReset();
 };
 

@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(CChildView, CShaderWnd)
    ON_COMMAND(ID_CONFIGURATIONS_MEDIUMPYRAMID, &CChildView::OnConfigurationsMediumPyramid)
    ON_COMMAND(ID_CONFIGURATIONS_LARGEPYRAMID, &CChildView::OnConfigurationsLargePyramid)
    ON_COMMAND(ID_CONFIGURATIONS_TEETER, &CChildView::OnConfigurationsTeeter)
+   ON_COMMAND(ID_OPERATION_RESET, &CChildView::OnOperationReset)
 END_MESSAGE_MAP()
 
 BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs) 
@@ -59,7 +60,7 @@ BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CChildView::InitGL()
 {
-   m_vCenter.z -= 35;
+   m_vCenter.z -= 60;
 
    SetupScene( 1 );
 
@@ -173,6 +174,13 @@ void CChildView::SetupScene( int sceneConfig )
       }
    case 5:
       {
+         AddCube( vec3( 0, 5, -10 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 5.0f );
+
+         AddCube( vec3( 0, 2, 0 ), vec3( 0, 0, 0 ), vec3( .5, 2.5, 5 ), 1000, FALSE, FALSE ); // base
+         AddCube( vec3( -.5, 4, 0 ), vec3( 0, 0, -.25 ), vec3( 15, .25, 3 ), 10.0f ); // plank
+         AddCube( vec3( 6, 15, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 30.0f ); // launcher
+         AddCube( vec3( -6, 7, 0 ), vec3( 0, 0, 0 ), vec3( 1, 1, 1 ), 1.0f ); // launched
+
          break;
       }
    default:
@@ -492,8 +500,9 @@ void CChildView::AddCube( CCube* cube )
 void CChildView::OnOperationShootcube()
 {
    CCube* cube = new CCube( vec3( 0, 15, 0 ), vec3( M_PI_4, M_PI_4, M_PI_4 ), vec3( 2, 2, 2 ), 5.0f );
+   //m_colManager.m_collisionsArray.clear();
    AddCube(cube);
-   //cube->InitGL();
+   cube->InitGL();
 }
 
 void CChildView::OnConfigurationsSmallPyramid()
@@ -519,4 +528,9 @@ void CChildView::OnConfigurationsLargePyramid()
 void CChildView::OnConfigurationsTeeter()
 {
    SetupScene( 5 );
+}
+
+void CChildView::OnOperationReset()
+{
+   SetupScene( m_sceneConfig );
 }
