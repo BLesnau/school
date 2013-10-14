@@ -134,6 +134,9 @@ void CCube::RenderGL( GLuint program )
    glBindVertexArray( m_vao );
    glBindBuffer( GL_ARRAY_BUFFER, m_buffer );
 
+   glEnable( GL_CULL_FACE );
+   glCullFace( GL_BACK );
+
    glBufferData( GL_ARRAY_BUFFER, sizeof(m_points) + sizeof(m_colors), NULL, GL_STATIC_DRAW );
    glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(m_points), m_points );
    glBufferSubData( GL_ARRAY_BUFFER, sizeof(m_points), sizeof(m_colors), m_colors );
