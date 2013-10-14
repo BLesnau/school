@@ -101,20 +101,6 @@ void CCube::InitCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bShowOneSi
    m_bShowOneSide = bShowOneSide;
    m_bStatic = bStatic;
 
-   /*if( m_bShowOneSide )
-   {
-      g_numVertices = 5;
-   }
-   else
-   {
-      g_numVertices = 36;
-   }*/
-
-   /*m_origPoints = new point4[g_numVertices];
-   m_points = new point4[g_numVertices];
-   m_colors = new color4[g_numVertices];
-   m_normals = new vec3[g_numVertices];*/
-
    m_c = pos;
    m_e = size;
    m_e *= 0.5f;
