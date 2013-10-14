@@ -45,6 +45,8 @@ public:
 
    static float Clamp(float v, float min, float max);
 
+   vector<stCollisionPoints> m_collisionsArray;
+
 private:
    BOOL CubeCubeCollisionCheck( CCube* cube1, CCube* cube2, vector<vec3> &hitPoints, int &numHitPoints, float &penetration, vec3 &hitNormal );
    void AddCollision( CCube* cube1, CCube* cube2, vec3 &point, vec3 &normal, float penetration);
@@ -60,5 +62,4 @@ private:
    BOOL VertInsideFace(vec3* verts0, vec3 &p0, float planeErr = 0.0f);
   
    vector<CCube*> m_cubes;
-   vector<stCollisionPoints> m_collisionsArray;
 };

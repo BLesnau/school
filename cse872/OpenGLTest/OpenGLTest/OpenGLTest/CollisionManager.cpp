@@ -75,7 +75,7 @@ BOOL CCollisionManager::CubeCubeCollisionCheck( CCube* cube1, CCube* cube2, vect
 {
    // Simple bounding sphere check first
    float len = (cube1->m_radius + cube2->m_radius);
-   auto squaredLength = length(cube2->m_c - cube1->m_c); //TODO - Look Here
+   auto squaredLength = length(cube2->m_c - cube1->m_c);
    squaredLength *= squaredLength;
    if ( squaredLength > (len*len)  )
    {
@@ -117,7 +117,7 @@ BOOL CCollisionManager::CubeCubeCollisionCheck( CCube* cube1, CCube* cube2, vect
 
    numHitPoints = 0;
 
-   if (/*penetration && hitNormal &&*/ hit)
+   if ( hit )
    {
       CalculateHitPoint(  cube1, 
          cube2,
@@ -140,7 +140,7 @@ BOOL CCollisionManager::SpanIntersect( CCube* cube1,
 {
    vec3 axis = axisc;
 
-   auto squaredLength = length(axis); //TODO - Look Here
+   auto squaredLength = length(axis);
    squaredLength *= squaredLength;
 	float lq = squaredLength;
 	if (lq <= 0.02f)
@@ -169,15 +169,6 @@ BOOL CCollisionManager::SpanIntersect( CCube* cube1,
 		return false;
 	}
 
-	/*
-	// You could do this test, but I prefair the above
-	// method
-	if (mina>maxb || minb>maxa)
-	{
-		return false;
-	}
-	*/
-
 	float penetration = (lena + lenb) - lenv;
 
 	if (pen)
@@ -200,7 +191,7 @@ BOOL CCollisionManager::SpanIntersect( CCube* cube1,
 		}
 	}
 
-	// Colllision
+	// Collision
 	return TRUE;
 }
 
@@ -224,14 +215,13 @@ void CCollisionManager::CalculateInterval( CCube* cube, const vec3 &axis, float 
 
    for (int i=0; i<8; i++)
    {
-     // Vertex[i] = vec3(/*normalize(*/cube->m_matWorld * vec4(Vertex[i].x, Vertex[i].y, Vertex[i].z, 1))/*)*/; // TODO - Look Here
-      Vertex[i] = vec3(/*normalize(*/ vec4(Vertex[i].x, Vertex[i].y, Vertex[i].z, 1) * cube->m_matWorld)/*)*/; // TODO - Look Here
+      Vertex[i] = vec3(vec4(Vertex[i].x, Vertex[i].y, Vertex[i].z, 1) * cube->m_matWorld);
    }
 
-   min = max = dot(Vertex[0], axis); //TODO - Look Here
+   min = max = dot(Vertex[0], axis);
    for (int i=0; i<8; i++)
    {
-      float d = dot(Vertex[i], axis); //TODO - Look Here
+      float d = dot(Vertex[i], axis);
 
       if (d<min) min = d;
       if (d>max) max = d;
@@ -286,16 +276,6 @@ void CCollisionManager::CalculateHitPoint(  CCube* cube1,
 	
 
 	{
-		// TO-DO - work out which one is the least number
-		// of verts, and use that, if both have two, work out
-		// the edge point exactly...if its just a single point, only
-		// use that single vert
-
-		// TO-DO** TO-DO
-		//int numVertsX = numVerts0;
-		//D3DXVECTOR3* vertsX = verts0;
-
-
 		if (numVerts1 < numVerts0)
 		{
 			numVertsX = numVerts1;
@@ -330,49 +310,10 @@ void CCollisionManager::CalculateHitPoint(  CCube* cube1,
 							vertsX,		numVertsX);
 		}
 
-
-
-		/*
-		static debugsphere sphere0(g_pD3DDevice, 0xff00ff00);
-		for (int i=0; i<numVerts0; i++)
-		{
-			sphere0.Draw(g_pD3DDevice, verts0[i].x, verts0[i].y, verts0[i].z, 0.5f);
-		}
-
-		static debugsphere sphere1(g_pD3DDevice, 0xff005500);
-		for (int i=0; i<numVerts1; i++)
-		{
-			sphere1.Draw(g_pD3DDevice, verts1[i].x, verts1[i].y, verts1[i].z, 0.5f);
-		}
-		*/
-
-
-      /*char buf[128];
-      sprintf(buf, "spheres: %d\n", numVertsX);
-
-      static debugsphere sphere(g_pD3DDevice, 0xff000000);
-      for (int i=0; i<numVertsX; i++)
-      {
-      sphere.Draw(g_pD3DDevice, vertsX[i].x, vertsX[i].y, vertsX[i].z, 0.5f);
-      }*/
-		
-
-
-		/*
-		*hitPoint = D3DXVECTOR3(0,0,0);
-		// Work out the average hit point
-		for (int i=0; i<numVertsX; i++)
-		{
-			*hitPoint += vertsX[i];
-		}
-		*hitPoint = (*hitPoint) * (1.0f/numVertsX);
-		*/
-
 		numHitPoints = numVertsX;
 		for (int i=0; i<numVertsX; i++)
 		{
          hitPoints.push_back( vertsX[i] );
-			//hitPoints[i] = vertsX[i]; //TODO - Look Here
 		}
 	}
 }
@@ -383,11 +324,6 @@ int CCollisionManager::GetNumHitPoints( CCube* cube,
                                        vec3 verts[8],
                                        int* vertIndexs)
 {
-   /*{
-   DrawLine3D(g_pD3DDevice, box0.m_c, (box0.m_c + hitNormal*3.0f), 0xffff00ff);
-   }*/
-
-
    float x = cube->m_e.x;
    float y = cube->m_e.y;
    float z = cube->m_e.z;
@@ -406,16 +342,15 @@ int CCollisionManager::GetNumHitPoints( CCube* cube,
 
    for (int i=0; i<8; i++)
    {
-      // Vertex[i] = vec3(/*normalize(*/cube->m_matWorld * vec4(Vertex[i].x, Vertex[i].y, Vertex[i].z, 1))/*)*/; // TODO - Look Here
-      Vertex[i] = vec3(/*normalize(*/ vec4(Vertex[i].x, Vertex[i].y, Vertex[i].z, 1) * cube->m_matWorld)/*)*/; // TODO - Look Here
+      Vertex[i] = vec3(vec4(Vertex[i].x, Vertex[i].y, Vertex[i].z, 1) * cube->m_matWorld);
    }
 
    vec3 planePoint = Vertex[0];
-   float maxdist = dot(Vertex[0], hitNormal); //TODO - Look Here
+   float maxdist = dot(Vertex[0], hitNormal);
 
    for (int i=0; i<8; i++)
    {
-      float d = dot(Vertex[i], hitNormal); //TODO - Look Here
+      float d = dot(Vertex[i], hitNormal);
       if (d > maxdist)
       {
          maxdist = d;
@@ -425,14 +360,14 @@ int CCollisionManager::GetNumHitPoints( CCube* cube,
 
    // Plane Equation (A dot N) - d = 0;
 
-   float d = dot(planePoint, hitNormal); //TODO - Look Here
+   float d = dot(planePoint, hitNormal);
    d -= penetration + 0.01f;
 
 
    int numVerts = 0;
    for (int i=0; i<8; i++)
    {
-      float side = dot(Vertex[i], hitNormal) - d; //TODO - Look Here
+      float side = dot(Vertex[i], hitNormal) - d;
 
       if ( side > 0 )
       {
@@ -467,7 +402,6 @@ void CCollisionManager::ClipFaceFaceVerts(vec3* verts0,
    {
       vertsTemp1[i] = verts1[i] + (n * dot(n, verts0[0]-verts1[i]));
    }
-
 
    static vec3 temp[50];
    int numVerts = 0;
@@ -521,25 +455,13 @@ void CCollisionManager::ClipFaceFaceVerts(vec3* verts0,
                   temp[numVerts] = pX;
                   numVerts++;
                }
-
             }
-
 
             if (VertInsideFace(vertA, p0))
             {
                temp[numVerts] = p0;
                numVerts++;
             }
-
-
-            //if (numVerts > 40)
-            //{
-            //   // We have a fixed array we pass in, which has a max size of 50
-            //   // so if we go past this we'll have memory corruption
-
-            //   // temp above is size 50 as well
-            //   DBG_HALT;
-            //}
          }
       }
    }
@@ -551,13 +473,12 @@ void CCollisionManager::ClipFaceFaceVerts(vec3* verts0,
       {
          if (i!=j)
          {
-            auto squaredLength = length(temp[i] - temp[j]); //TODO - Look Here
+            auto squaredLength = length(temp[i] - temp[j]);
             squaredLength *= squaredLength;
             float dist = squaredLength;
 
             if (dist < 6.5f)
             {
-
                for (int k=j; k<numVerts; k++)
                {
                   temp[k] = temp[k+1];
@@ -735,7 +656,7 @@ void CCollisionManager::ClosestPtPointOBB(const vec3& point,
       if (dist >  cube->m_e[i]) dist =  cube->m_e[i];
       if (dist < -cube->m_e[i]) dist = -cube->m_e[i];
 
-      q = q + (dist * vec3(cube->m_u[i])); // TODO - Look Here
+      q = q + (dist * vec3(cube->m_u[i]));
    }
 
    *closestP = q;

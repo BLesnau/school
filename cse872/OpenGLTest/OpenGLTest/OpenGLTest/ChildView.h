@@ -17,6 +17,7 @@ protected:
    virtual void RenderGL();
    void Step( float dt );
    void AddCube( CCube* cube );
+   void UpdateSleepingObjects();
 
    vector<CCube*> m_cubes;
    CCollisionManager m_colManager;

@@ -51,8 +51,7 @@ BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CChildView::InitGL()
 {
-   CCube* cube = new CCube( vec3( 0, 1, 0 ), vec3( 1, 0, 0 ), vec3( 2, 2, 2 ), 5.0f );
-   //CCube* cube = new CCube( vec3( 0, -0.3, 0 ), vec3( 0, 0, 0 ), vec3( 2, 2, 2 ), 5.0f );
+   CCube* cube = new CCube( vec3( 0, 2, 0 ), vec3( 2, 2, 2 ), vec3( 2, 2, 2 ), 1.0f );
    CCube* bottomCube = new CCube( vec3( 0, -2, 0 ), vec3( 0, 0, 0 ), vec3( 10, 1, 10 ), 100000, TRUE );
    AddCube( cube );
    AddCube( bottomCube );
@@ -86,11 +85,92 @@ void CChildView::RenderGL()
    }
 }
 
+void CChildView::UpdateSleepingObjects()
+{
+   //return;
+   // For an object to remain sleeping, it must be in collision with another
+   // sleeping object or infinite mass object
+   // or its energy/motion is less than a certain threshold
+
+   for (int k=0; k<m_colManager.m_collisionsArray.size(); k++)
+   {	
+      // Check its hitting another object
+      bool sleepingCollision = false;
+      for (int i=0; i<m_colManager.m_collisionsArray.size(); i++)
+      {
+         stCollisionPoints* cp = &m_colManager.m_collisionsArray[ i ];
+
+         CCube* box0				= cp->box0;
+         CCube* box1				= cp->box1;
+
+         CCube* sleepCube = m_cubes[k];
+         CCube* otherCube = NULL;
+
+         if (sleepCube == box0) otherCube=box1;
+         if (sleepCube == box1) otherCube=box0;
+
+         if (otherCube)
+         {
+            if (!otherCube->m_awake || otherCube->m_mass>1000.0f)
+            {
+               sleepingCollision |= true;
+            }
+         }
+      }
+
+      if (!sleepingCollision)
+      {
+         m_cubes[k]->m_rwaMotion = 2 * g_sleepEpsilon;
+         m_cubes[k]->m_awake = true;
+      }
+
+      // Check its energy/motion
+      if (m_cubes[k]->m_rwaMotion < g_sleepEpsilon)
+      {
+         m_cubes[k]->m_awake = false;
+         m_cubes[k]->m_linVelocity = vec3(0,0,0);
+         m_cubes[k]->m_angVelocity = vec4(0,0,0,1);
+      }
+      else if (m_cubes[k]->m_rwaMotion > 10 * g_sleepEpsilon)
+      {
+         m_cubes[k]->m_rwaMotion = 10 * g_sleepEpsilon;
+         m_cubes[k]->m_awake = true;
+      }
+
+      // Check if a cube in collision with our sleeping cube
+      // has enough energy to wake it up
+      for (int i=0; i<m_colManager.m_collisionsArray.size(); i++)
+      {
+         stCollisionPoints* cp = &m_colManager.m_collisionsArray[ i ];
+
+         CCube* box0				= cp->box0;
+         CCube* box1				= cp->box1;
+
+         CCube* sleepCube = m_cubes[k];
+         CCube* otherCube = NULL;
+
+         if (sleepCube == box0) otherCube=box1;
+         if (sleepCube == box1) otherCube=box0;
+
+         if (otherCube && otherCube->m_mass<1000.0f)
+         {
+            if (otherCube->m_rwaMotion > (2 * g_sleepEpsilon))
+            {
+               m_cubes[k]->m_awake = true;
+               m_cubes[k]->m_rwaMotion = 2 * g_sleepEpsilon;
+            }
+         }
+      }
+   }
+}
+
 int g_numIterations = 7;
 
 void CChildView::Step( float dt )
 {
    m_colManager.DetectCollisions();
+
+   UpdateSleepingObjects();
 
    for( int i=0; i<m_cubes.size(); i++ )
    {
@@ -120,7 +200,6 @@ void CChildView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
    CShaderWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 }
-
 
 void CChildView::OnOperationTimer()
 {

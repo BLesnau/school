@@ -43,6 +43,7 @@ public:
    vec4  m_torques;
    float m_radius;	
    float m_rwaMotion;
+   bool  m_awake;
 
 private:
    void Quad(int a, int b, int c, int d, int& index);

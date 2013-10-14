@@ -6,7 +6,9 @@
 
 const int NumVertices = 36;
 float g_friction = 0.6f;
-bool g_positionCorrection	= true;  // Sinking fix!
+bool g_positionCorrection	= true;  // Sinking fix
+
+const bool g_startSleeping = false;
 
 // RGBA colors
 color4 vertex_colors[8] = {
@@ -92,16 +94,16 @@ void CCube::InitCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bStatic )
    m_torques = vec4( 0, 0, 0, 1 );
 
    // If we want our objects to start awake or sleeping
-   //if (g_startSleeping)
-   //{
-   //   m_rwaMotion = g_sleepEpsilon;
-   //   m_awake = false;
-   //}
-   //else
-   //{
-   m_rwaMotion = 2 * g_sleepEpsilon;
-   //m_awake = true;
-   //}
+   if (g_startSleeping)
+   {
+      m_rwaMotion = g_sleepEpsilon;
+      m_awake = false;
+   }
+   else
+   {
+      m_rwaMotion = 2 * g_sleepEpsilon;
+      m_awake = true;
+   }
 
    m_radius = sqrtf(size.x*size.x + size.y*size.y + size.z*size.z) + 0.4f;
 
@@ -141,16 +143,24 @@ void CCube::RenderGL( GLuint program )
 
 void CCube::UpdateVelocity( float dt )
 {
+   if( !m_awake )
+   {
+      return;
+   }
+
    if( !m_bStatic )
    {
       if (length(m_linVelocity) < 0.0001f)  m_linVelocity = vec3(0,0,0);
       if (length(m_angVelocity) < 0.0001f)  m_angVelocity = vec4(0,0,0,1);
 
-      auto gravity = vec3( 0, -9.8f * m_mass, 0 );
-      m_forces += gravity;
-      vec3 v3 = cross( (m_c - m_c), gravity );
-      vec4 v4( v3.x, v3.y, v3.z, 0);
-      m_torques = m_torques + v4;
+      if( m_awake )
+      {     
+         auto gravity = vec3( 0, -9.8f * m_mass, 0 );
+         m_forces += gravity;
+         vec3 v3 = cross( (m_c - m_c), gravity );
+         vec4 v4( v3.x, v3.y, v3.z, 0);
+         m_torques = m_torques + v4;
+      }
 
       m_angVelocity += ((m_torques * m_invInertia) * dt);
 
@@ -163,22 +173,27 @@ void CCube::UpdateVelocity( float dt )
 
    UpdateMatrix();
 
-   /*float motion =  dot(m_linVelocity, m_linVelocity) + dot(m_angVelocity, m_angVelocity);
+   float motion =  dot(m_linVelocity, m_linVelocity) + dot(m_angVelocity, m_angVelocity);
 
    float bias = 0.96f;
    m_rwaMotion = bias*m_rwaMotion + (1-bias)*motion;
-   if (m_rwaMotion> 50.0f) m_rwaMotion = 5.0f;*/
+   if (m_rwaMotion> 50.0f) m_rwaMotion = 5.0f;
 }
 
 void CCube::UpdatePosition( float dt )
 {
+   if( !m_awake )
+   {
+      return;
+   }
+
    if( !m_bStatic )
    {
       m_c += (m_linVelocity * dt);
 
       vec4 angVel = m_angVelocity;
 
-      quat Qvel = 0.5f * m_rot * quat(0, angVel.x, angVel.y, angVel.z);
+      quat Qvel = 0.5f * m_rot * quat(0, -angVel.x, -angVel.y, -angVel.z);
       m_rot = m_rot + (Qvel * dt);
       m_rot = normalize( m_rot );
 
@@ -197,12 +212,10 @@ void CCube::UpdateMatrix()
    m_u[1] = vec4( 0, 1, 0, 1 );
    m_u[2] = vec4( 0, 0, 1, 1 );
 
-   m_u[0] = matR * m_u[0];
-   m_u[1] = matR * m_u[1];
-   m_u[2] = matR * m_u[2];
-   /*m_u[0] = normalize( m_u[0] );
-   m_u[1] = normalize( m_u[1] );
-   m_u[2] = normalize( m_u[2] );*/
+   // TODO - LOOK HERE
+   m_u[0] = m_u[0] * matR;
+   m_u[1] = m_u[1] * matR;
+   m_u[2] = m_u[2] * matR;
 
    mat4 matT;
    matT[0].w = m_c.x;
@@ -232,7 +245,6 @@ void CCube::UpdateMatrix()
    m_invInertia = inverse(matR) * inverse(m_boxInertia) * matR;
 }
 
-// TODO - LOOK AT THIS WHOLE FUNCTION
 void CCube::AddCollisionImpulse( CCube* cube1, CCube* cube2, vec3 &hitPoint, vec3 &normal, float dt, float penetration )
 {
    // Some simple check code.
@@ -241,12 +253,11 @@ void CCube::AddCollisionImpulse( CCube* cube1, CCube* cube2, vec3 &hitPoint, vec
    float invMass0 = (cube1->m_mass>1000.0f) ? 0.0f : (1.0f/cube1->m_mass);
    float invMass1 = (cube2->m_mass>1000.0f) ? 0.0f : (1.0f/cube2->m_mass);
 
-   /*invMass0 = (!cube1->m_awake) ? 0.0f : invMass0;
-   invMass1 = (!cube2->m_awake) ? 0.0f : invMass1;*/
+   invMass0 = (!cube1->m_awake) ? 0.0f : invMass0;
+   invMass1 = (!cube2->m_awake) ? 0.0f : invMass1;
 
    // Both objects are non movable
    if ( (invMass0+invMass1)==0.0 ) return;
-
 
    vec3 r0 = hitPoint - cube1->m_c;
    vec3 r1 = hitPoint - cube2->m_c;
@@ -270,7 +281,6 @@ void CCube::AddCollisionImpulse( CCube* cube1, CCube* cube2, vec3 &hitPoint, vec
    float inv_dt = dt > 0.0f ? 1.0f / dt : 0.0f;
    float bias = biasFactorValue * inv_dt * glm::max(0.0f, penetration - allowedPenetration);
 
-
    vec3 crossR0Norm = cross(r0, normal);
    vec3 crossR1Norm = cross(r1, normal);
    float kNormal = invMass0 + invMass1+  
@@ -282,11 +292,9 @@ void CCube::AddCollisionImpulse( CCube* cube1, CCube* cube2, vec3 &hitPoint, vec
 
    float massNormal = 1.0f / kNormal;
 
-
-   float dPn = massNormal * (-vn + bias);
+   float dPn = massNormal * ( -vn + bias );
 
    dPn = glm::max(dPn, 0.0f);
-
 
    // Apply normal contact impulse
    vec3 P = dPn * normal;
@@ -294,44 +302,39 @@ void CCube::AddCollisionImpulse( CCube* cube1, CCube* cube2, vec3 &hitPoint, vec
    vec3 crossR1P = cross(r1, P);
    cube1->m_linVelocity += invMass0 * P;
    cube1->m_angVelocity += vec4(crossR0P.x, crossR0P.y, crossR0P.z, 1) * cube1->m_invInertia;
-   
+
    cube2->m_linVelocity -= invMass1 * P;
    cube2->m_angVelocity -= vec4(crossR1P.x, crossR1P.y, crossR1P.z, 1) * cube2->m_invInertia;
    // NORMAL
-
-
 
    // TANGENT Impulse Code
    {
       // Work out our tangent vector, with is perpendicular
       // to our collision normal
+      // TODO - LOOK HERE
       vec3 tangent = vec3(0,0,0);
       tangent = dv - (dot(dv, normal) * normal);
-      if( tangent.x != 0 && tangent.y != 0 && tangent.z != 0 )
+      if( tangent.x != 0 || tangent.y != 0 || tangent.z != 0 )
       {
          tangent = normalize(tangent);
       }
 
       vec3 crossR0Tan = cross(r0, tangent);
       vec3 crossR1Tan = cross(r1, tangent);
-
       float kTangent = invMass0 + invMass1+  
 
          dot( tangent, 
          cross(vec3(vec4(crossR0Tan.x, crossR0Tan.y, crossR0Tan.z, 1) * cube1->m_invInertia), r0) +
-         cross(vec3(vec4(crossR1Tan.x, crossR1Tan.y, crossR1Tan.z, 1) * cube1->m_invInertia), r1)
+         cross(vec3(vec4(crossR1Tan.x, crossR1Tan.y, crossR1Tan.z, 1) * cube2->m_invInertia), r1)
          );
 
       float massTangent = 1.0f / kTangent;
 
-
       float vt = dot(dv, tangent);
       float dPt = massTangent * (-vt);
 
-
       float maxPt = g_friction * dPn;
       dPt = CCollisionManager::Clamp(dPt, -maxPt, maxPt);
-
 
       // Apply contact impulse
       vec3 P = dPt * tangent;
@@ -346,5 +349,4 @@ void CCube::AddCollisionImpulse( CCube* cube1, CCube* cube2, vec3 &hitPoint, vec
       cube2->m_angVelocity -= vec4(crossR1P2.x, crossR1P2.y, crossR1P2.z, 1) * cube2->m_invInertia;
    }
    // TANGENT
-
 }
