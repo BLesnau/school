@@ -6,7 +6,7 @@
 
 const int NumVertices = 36;
 float g_friction = 0.6f;
-bool g_positionCorrection	= true;  // Sinking fix
+bool g_positionCorrection   = true;  // Sinking fix
 
 const bool g_startSleeping = false;
 
@@ -36,7 +36,7 @@ void CCube::Quad(int a, int b, int c, int d, int& index)
       point4(  m_e.x, -m_e.y, -m_e.z, 1.0 )
    };
 
-   vec3 u = vec3(vertex_positions[b]-vertex_positions[a]);	
+   vec3 u = vec3(vertex_positions[b]-vertex_positions[a]);  
    vec3 v = vec3(vertex_positions[c]-vertex_positions[a]);
    vec3 normal = vec3(normalize(cross(u,v)));
 
@@ -61,6 +61,21 @@ void CCube::ColorCube()
 
    if( m_bShowOneSide )
    {
+      point4 vertex_positions[8] = {
+      point4( -m_e.x, -m_e.y,  m_e.z, 1.0 ),
+      point4( -m_e.x,  m_e.y,  m_e.z, 1.0 ),
+      point4(  m_e.x,  m_e.y,  m_e.z, 1.0 ),
+      point4(  m_e.x, -m_e.y,  m_e.z, 1.0 ),
+      point4( -m_e.x, -m_e.y, -m_e.z, 1.0 ),
+      point4( -m_e.x,  m_e.y, -m_e.z, 1.0 ),
+      point4(  m_e.x,  m_e.y, -m_e.z, 1.0 ),
+      point4(  m_e.x, -m_e.y, -m_e.z, 1.0 )
+      };
+
+      m_normals[index] = m_normals[0]; m_colors[index] = vertex_colors[5]; m_points[index] = vertex_positions[5]; index++;
+
+      m_origPoints[index-1] = m_points[index-1];
+
       return;
    }
 
@@ -85,6 +100,20 @@ void CCube::InitCube( vec3 pos, vec3 rot, vec3 size, float mass, BOOL bShowOneSi
 {
    m_bShowOneSide = bShowOneSide;
    m_bStatic = bStatic;
+
+   /*if( m_bShowOneSide )
+   {
+      g_numVertices = 5;
+   }
+   else
+   {
+      g_numVertices = 36;
+   }*/
+
+   /*m_origPoints = new point4[g_numVertices];
+   m_points = new point4[g_numVertices];
+   m_colors = new color4[g_numVertices];
+   m_normals = new vec3[g_numVertices];*/
 
    m_c = pos;
    m_e = size;
@@ -148,7 +177,14 @@ void CCube::RenderGL( GLuint program )
    glEnableVertexAttribArray( vColor );
    glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(m_points)) );
 
-   glDrawArrays( GL_TRIANGLES, 0, NumVertices );
+   if( m_bShowOneSide )
+   {
+      glDrawArrays( GL_LINE_LOOP, 0, NumVertices );
+   }
+   else
+   {
+      glDrawArrays( GL_TRIANGLES, 0, NumVertices );
+   }
 }
 
 void CCube::UpdateVelocity( float dt )
@@ -207,7 +243,7 @@ void CCube::UpdatePosition( float dt )
       m_rot = m_rot + (Qvel * dt);
       m_rot = normalize( m_rot );
 
-      m_forces	= vec3( 0, 0, 0 );
+      m_forces  = vec3( 0, 0, 0 );
       m_torques = vec4( 0, 0, 0, 1 );
    }
 

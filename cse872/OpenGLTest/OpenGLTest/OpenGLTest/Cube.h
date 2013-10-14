@@ -59,6 +59,10 @@ private:
    point4   m_points[36];
    color4   m_colors[36];
    vec3     m_normals[36];
+   /*point4*   m_origPoints;
+   point4*   m_points;
+   color4*   m_colors;
+   vec3*     m_normals;*/
 
    BOOL m_bStatic;
    BOOL m_bShowOneSide;
