@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(CChildView, CShaderWnd)
    ON_COMMAND(ID_CONFIGURATIONS_LARGEPYRAMID, &CChildView::OnConfigurationsLargePyramid)
    ON_COMMAND(ID_CONFIGURATIONS_TEETER, &CChildView::OnConfigurationsTeeter)
    ON_COMMAND(ID_OPERATION_RESET, &CChildView::OnOperationReset)
+   ON_COMMAND(ID_HELP_INSTRUCTIONS, &CChildView::OnHelpInstructions)
 END_MESSAGE_MAP()
 
 BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs) 
@@ -317,7 +318,7 @@ void CChildView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
    case 'z':
    case 'Z':
       {
-         OnOperationShootcube();
+         //OnOperationShootcube();
          break;
       }
    case '1':
@@ -519,4 +520,11 @@ void CChildView::OnConfigurationsTeeter()
 void CChildView::OnOperationReset()
 {
    SetupScene( m_sceneConfig );
+}
+
+
+void CChildView::OnHelpInstructions()
+{
+   CDialog dlg = CDialog( IDD_DIALOG1 );
+   dlg.ShowWindow( SW_SHOW );
 }
