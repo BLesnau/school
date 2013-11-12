@@ -1,0 +1,21 @@
+The menu options are as follows:
+'Operation > Reset' or 'R' - Resets to the starting state of the current scene configuration
+'Configurations > Small Pyramid' - A pyramid with three cubes as a base
+'Configurations > Single Cube' - One cube by itself
+'Configurations > Medium Pyramid' - A pyramid with four cubes as a base
+'Configurations > Large Pyramid' - A pyramid with five cubes as a base
+'Configurations > Teeter-totter' - A teeter-totter that launches a cube into the air
+
+Each scene configuration contains one cube that can be controlled via a keyboard:
+'Q'             - Adds angular velocity in the X direction
+'A'             - Subtracts angular velocity in the X direction
+'W'             - Adds angular velocity in the Y direction
+'S'             - Subtracts angular velocity in the Y direction
+'E'             - Adds angular velocity in the Z direction
+'D'             - Subtracts angular velocity in the Z direction
+'Up Arrow'      - Subtracts linear velocity in the Z direction
+'Down Arrow'    - Adds linear velocity in the Z direction
+'Left Arrow'    - Subtracts linear velocity in the X direction
+'Right Arror'   - Adds linear velocity in the X direction
+'Space'         - Adds linear velocity in the Y direction
+'C'             - Subtracts linear velocity in the Y direction

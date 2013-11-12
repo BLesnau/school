@@ -100,11 +100,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChildView.h" />
+    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OpenGLTest.h" />
-    <ClInclude Include="PhysicsObject.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ShaderWnd\ShaderWnd.h" />
     <ClInclude Include="stdafx.h" />
@@ -112,10 +112,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChildView.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OpenGLTest.cpp" />
-    <ClCompile Include="PhysicsObject.cpp" />
     <ClCompile Include="ShaderWnd\glew.cpp" />
     <ClCompile Include="ShaderWnd\ShaderWnd.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -103,26 +103,17 @@ BEGIN
     BEGIN
         MENUITEM "E&xit",                       ID_APP_EXIT
     END
-    POPUP "&Edit"
-    BEGIN
-        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
-        MENUITEM SEPARATOR
-        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
-        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
-        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
-    END
-    POPUP "&View"
-    BEGIN
-        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
-        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
-    END
-    POPUP "&Help"
-    BEGIN
-        MENUITEM "&About OpenGLTest...",        ID_APP_ABOUT
-    END
     POPUP "&Operation"
     BEGIN
-        MENUITEM "&Timer",                      ID_OPERATION_TIMER
+        MENUITEM "&Reset (R)",                  ID_OPERATION_RESET
+    END
+    POPUP "&Configurations"
+    BEGIN
+        MENUITEM "Small Pyramid (&1)",          ID_CONFIGURATIONS_SMALLPYRAMID
+        MENUITEM "Single Cube (&2)",            ID_CONFIGURATIONS_SINGLECUBE
+        MENUITEM "Medium Pyramid (&3)",         ID_CONFIGURATIONS_MEDIUMPYRAMID
+        MENUITEM "Large Pyramid (&4)",          ID_CONFIGURATIONS_LARGEPYRAMID
+        MENUITEM "Teeter-totter (&5)",          ID_CONFIGURATIONS_TEETER
     END
 END
 
@@ -161,6 +152,15 @@ BEGIN
     LTEXT           "OpenGLTest, Version 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2013",IDC_STATIC,42,26,114,8
     DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+END
+
+IDD_DIALOG1 DIALOGEX 0, 0, 309, 186
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Instructions"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,252,165,50,14
+    LTEXT           "The menu options are as follows:\n'Operation > Reset' or 'R' - Resets to the starting state of the current scene configuration\n'Configurations > Small Pyramid' - A pyramid with three cubes as a base\n'Configurations > Single Cube' - One cube by itself\n'Configurations > Medium Pyramid' - A pyramid with four cubes as a base\n'Configurations > Large Pyramid' - A pyramid with five cubes as a base\n'Configurations > Teeter-totter' - A teeter-totter that launches a cube into the air\n\nEach scene configuration contains one cube that can be controlled via a keyboard:\n'Q'             - Adds angular velocity in the X direction\n'A'             - Subtracts angular velocity in the X direction\n'W'             - Adds angular velocity in the Y direction\n'S'             - Subtracts angular velocity in the Y direction\n'E'             - Adds angular velocity in the Z direction\n'D'             - Subtracts angular velocity in the Z direction\n'Up Arrow'      - Subtracts linear velocity in the Z direction\n'Down Arrow'    - Adds linear velocity in the Z direction\n'Left Arrow'    - Subtracts linear velocity in the X direction\n'Right Arror'   - Adds linear velocity in the X direction\n'Space'         - Adds linear velocity in the Y direction\n'C'             - Subtracts linear velocity in the Y direction",IDC_STATIC,7,7,295,145
 END
 
 
@@ -217,6 +217,14 @@ BEGIN
         RIGHTMARGIN, 163
         TOPMARGIN, 7
         BOTTOMMARGIN, 55
+    END
+
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 179
     END
 END
 #endif    // APSTUDIO_INVOKED
