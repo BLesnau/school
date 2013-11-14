@@ -224,9 +224,9 @@ void assemble_fragment_input(int num, GzToken * typeList, GzPointer*  fragment_i
 {	
    double eNorm[3];
    double sum = e[0] + e[1] +e [2];
-   eNorm[0] = (double)e[0] / sum;
-   eNorm[1] = (double)e[1] / sum;
-   eNorm[2] = (double)e[2] / sum;
+   eNorm[0] = e[0] / sum;
+   eNorm[1] = e[1] / sum;
+   eNorm[2] = e[2] / sum;
 
    //Todo: linear interpolate all vertex shader output in list to prepare the input in fragment shader
    for (int j = 0; j < num; j++) 
@@ -255,8 +255,14 @@ void assemble_fragment_input(int num, GzToken * typeList, GzPointer*  fragment_i
             break;
          }        
       case GZ_TEXTURE_INDEX:
-         (*( (GzTextureIndex*) (fragment_input_list[j])))[0] = (*((GzTextureIndex*) (list[0][j])))[0];
-         (*( (GzTextureIndex*) (fragment_input_list[j])))[1] = (*((GzTextureIndex*) (list[0][j])))[1];
+         (*( (GzTextureIndex*) (fragment_input_list[j])))[0] = (*((GzTextureIndex*) (list[0][j])))[0] * eNorm[0];
+         (*( (GzTextureIndex*) (fragment_input_list[j])))[0] += (*((GzTextureIndex*) (list[1][j])))[0] * eNorm[1];
+         (*( (GzTextureIndex*) (fragment_input_list[j])))[0] += (*((GzTextureIndex*) (list[2][j])))[0] * eNorm[2];
+
+         (*( (GzTextureIndex*) (fragment_input_list[j])))[1] = (*((GzTextureIndex*) (list[0][j])))[1] * eNorm[0];
+         (*( (GzTextureIndex*) (fragment_input_list[j])))[1] += (*((GzTextureIndex*) (list[1][j])))[1] * eNorm[1];
+         (*( (GzTextureIndex*) (fragment_input_list[j])))[1] += (*((GzTextureIndex*) (list[2][j])))[1] * eNorm[2];
+         
          break;
       default:
          break;
