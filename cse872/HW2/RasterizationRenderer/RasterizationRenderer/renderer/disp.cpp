@@ -73,7 +73,7 @@ int GzDisplay::Put(int i, int	j, GzIntensity	r, GzIntensity	g, GzIntensity	b, Gz
       pixel.red = r;
       pixel.green = g;
       pixel.blue = b;
-      pixel.z = r;
+      pixel.z = z;
    }
 
    return GZ_SUCCESS;
