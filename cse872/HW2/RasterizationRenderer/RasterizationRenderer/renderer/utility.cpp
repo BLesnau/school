@@ -235,9 +235,18 @@ void assemble_fragment_input(int num, GzToken * typeList, GzPointer*  fragment_i
       {
       case GZ_POSITION:
       case GZ_NORMAL:
-         (*( (GzCoord*) (fragment_input_list[j])))[0] = (*((GzCoord*) (list[0][j])))[0];
-         (*( (GzCoord*) (fragment_input_list[j])))[1] = (*((GzCoord*) (list[0][j])))[1];
-         (*( (GzCoord*) (fragment_input_list[j])))[2] = (*((GzCoord*) (list[0][j])))[2];
+         (*( (GzCoord*) (fragment_input_list[j])))[0] = (*((GzCoord*) (list[0][j])))[0] * eNorm[0];
+         (*( (GzCoord*) (fragment_input_list[j])))[0] += (*((GzCoord*) (list[1][j])))[0] * eNorm[1];
+         (*( (GzCoord*) (fragment_input_list[j])))[0] += (*((GzCoord*) (list[2][j])))[0] * eNorm[2];
+
+         (*( (GzCoord*) (fragment_input_list[j])))[1] = (*((GzCoord*) (list[0][j])))[1] * eNorm[0];
+         (*( (GzCoord*) (fragment_input_list[j])))[1] += (*((GzCoord*) (list[1][j])))[1] * eNorm[1];
+         (*( (GzCoord*) (fragment_input_list[j])))[1] += (*((GzCoord*) (list[2][j])))[1] * eNorm[2];
+
+         (*( (GzCoord*) (fragment_input_list[j])))[2] = (*((GzCoord*) (list[0][j])))[2] * eNorm[0];
+         (*( (GzCoord*) (fragment_input_list[j])))[2] += (*((GzCoord*) (list[1][j])))[2] * eNorm[1];
+         (*( (GzCoord*) (fragment_input_list[j])))[2] += (*((GzCoord*) (list[2][j])))[2] * eNorm[2];
+
          break;
       case GZ_COLOR:
          {
@@ -252,6 +261,7 @@ void assemble_fragment_input(int num, GzToken * typeList, GzPointer*  fragment_i
             (*( (GzColor*) (fragment_input_list[j])))[2] = (*((GzColor*) (list[0][j])))[2] * eNorm[0];
             (*( (GzColor*) (fragment_input_list[j])))[2] += (*((GzColor*) (list[1][j])))[2] * eNorm[1];
             (*( (GzColor*) (fragment_input_list[j])))[2] += (*((GzColor*) (list[2][j])))[2] * eNorm[2];
+
             break;
          }        
       case GZ_TEXTURE_INDEX:
