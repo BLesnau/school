@@ -46,13 +46,12 @@ int tex_fun(float u,float v, GzColor& color)
    if (v > 1.)
       v = 1.;
 
-   /*color[RED] = image[int((u*xs*ys) + v*xs)][RED];
-   color[GREEN] = image[int((u*xs*ys) + v*xs)][GREEN];
-   color[BLUE] = image[int((u*xs*ys) + v*xs)][BLUE];
+   int uX = u*xs;
+   int vY = v*ys;
 
-   color[RED] = 200;
-   color[GREEN] = 200;
-   color[BLUE] =  200;*/
+   color[RED] = image[uX+vY*xs][RED];
+   color[GREEN] = image[uX+vY*xs][GREEN];
+   color[BLUE] = image[uX+vY*xs][BLUE];
 
    return 0;
 }
