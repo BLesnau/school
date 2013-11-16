@@ -222,11 +222,11 @@ void assemble_vertex_input(int num, GzToken * typeList, GzPointer**  inList, GzP
 
 void assemble_fragment_input(int num, GzToken * typeList, GzPointer*  fragment_input_list, GzPointer ** list, double *e)
 {	
-   double eNorm[3];
-   double sum = e[0] + e[1] +e [2];
-   eNorm[0] = e[0] / sum;
-   eNorm[1] = e[1] / sum;
-   eNorm[2] = e[2] / sum;
+   float eNorm[3];
+   float sum = (float)e[0] + (float)e[1] + (float)e[2];
+   eNorm[0] = (float)e[0] / sum;
+   eNorm[1] = (float)e[1] / sum;
+   eNorm[2] = (float)e[2] / sum;
 
    //Todo: linear interpolate all vertex shader output in list to prepare the input in fragment shader
    for (int j = 0; j < num; j++) 
