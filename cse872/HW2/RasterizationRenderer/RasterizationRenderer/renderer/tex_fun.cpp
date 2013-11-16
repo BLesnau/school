@@ -38,18 +38,18 @@ GzColor BilinearInterpolateColors( float x, float y, GzColor cTL, GzColor cTR, G
 {
    float xDiff = x - (int)x;
    float xDiffInv = 1 - xDiff;
-   GzColor topColor = { cTL[RED]*xDiff + cTR[RED]*xDiffInv,
-      cTL[GREEN]*xDiff + cTR[GREEN]*xDiffInv,
-      cTL[BLUE]*xDiff + cTR[BLUE]*xDiffInv };
-   GzColor bottomColor = { cBL[RED]*xDiff + cBR[RED]*xDiffInv,
-      cBL[GREEN]*xDiff + cBR[GREEN]*xDiffInv,
-      cBL[BLUE]*xDiff + cBR[BLUE]*xDiffInv };
+   GzColor topColor = { cTL[RED]*xDiffInv + cTR[RED]*xDiff,
+      cTL[GREEN]*xDiffInv + cTR[GREEN]*xDiff,
+      cTL[BLUE]*xDiffInv + cTR[BLUE]*xDiff };
+   GzColor bottomColor = { cBL[RED]*xDiffInv + cBR[RED]*xDiff,
+      cBL[GREEN]*xDiffInv + cBR[GREEN]*xDiff,
+      cBL[BLUE]*xDiffInv + cBR[BLUE]*xDiff };
 
    float yDiff = y - (int)y;
    float yDiffInv = 1 - yDiff;
-   GzColor endColor = { topColor[RED]*yDiff + bottomColor[RED]*yDiffInv,
-      topColor[GREEN]*yDiff + bottomColor[GREEN]*yDiffInv,
-      topColor[BLUE]*yDiff + bottomColor[BLUE]*yDiffInv };
+   GzColor endColor = { topColor[RED]*yDiffInv + bottomColor[RED]*yDiff,
+      topColor[GREEN]*yDiffInv + bottomColor[GREEN]*yDiff,
+      topColor[BLUE]*yDiffInv + bottomColor[BLUE]*yDiff };
 
    return endColor;
 }
@@ -103,21 +103,6 @@ int tex_fun(float u,float v, GzColor& color)
    GzColor cTR = GetTexPixel( TR[0], TR[1] );
    GzColor cBL = GetTexPixel( BL[0], BL[1] );
    GzColor cBR = GetTexPixel( BR[0], BR[1] );
-
-   float xDiff = x - TL[0];
-   float xDiffInv = 1 - xDiff;
-   GzColor topColor = { cTL[RED]*xDiff + cTR[RED]*xDiffInv,
-                        cTL[GREEN]*xDiff + cTR[GREEN]*xDiffInv,
-                        cTL[BLUE]*xDiff + cTR[BLUE]*xDiffInv };
-   GzColor bottomColor = { cBL[RED]*xDiff + cBR[RED]*xDiffInv,
-                           cBL[GREEN]*xDiff + cBR[GREEN]*xDiffInv,
-                           cBL[BLUE]*xDiff + cBR[BLUE]*xDiffInv };
-
-   float yDiff = y - TL[1];
-   float yDiffInv = 1 - yDiff;
-   GzColor endColor = { topColor[RED]*yDiff + bottomColor[RED]*yDiffInv,
-               topColor[GREEN]*yDiff + bottomColor[GREEN]*yDiffInv,
-               topColor[BLUE]*yDiff + bottomColor[BLUE]*yDiffInv };
 
    color = BilinearInterpolateColors( x, y, cTL, cTR, cBL, cBR );
 
