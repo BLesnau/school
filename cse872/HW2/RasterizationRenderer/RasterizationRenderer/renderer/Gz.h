@@ -28,6 +28,7 @@ typedef short   GzIntensity;		/* 0-4095 in lower 12-bits for RGBA */
 typedef int	    GzDepth;		/* signed z for clipping */
 typedef std::array<float, 3> GzCoord;
 typedef std::array<float, 2> GzTextureIndex;
+typedef std::array<int, 2> GzPoint;
 typedef float	GzMatrix[4][4];
 typedef int		GzDepth;	/* z is signed for clipping */
 typedef	int	    (*GzTexture)(float u, float v, GzColor &color);	/* pointer to texture sampling method */

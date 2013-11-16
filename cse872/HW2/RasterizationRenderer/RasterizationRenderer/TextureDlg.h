@@ -16,6 +16,7 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+   afx_msg void RadioClick();
 
 	DECLARE_MESSAGE_MAP()
 public:
