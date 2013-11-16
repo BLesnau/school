@@ -142,9 +142,39 @@ GzColor GetPTexPixel( int x, int y )
 }
 
 /* Procedural texture function */
-int ptex_fun(float u,float v,GzColor& color)
+int ptex_fun_crossed(float u,float v,GzColor& color)
 {
-   if ( (((int) floor(u*16.f))+ (int) floor(v*16.f)) % 2 == 0 ) {
+   if ( (((int) floor(u*16.f))) % 2 == 0 || (((int) floor(v*16.f))) % 2 == 0 ) {
+      color[0] = 1.f;
+      color[1] = 0.f;
+      color[2] = 0.f;
+   } else {
+      color[0] = 0.f;
+      color[1] = 0.f;
+      color[2] = 1.f;
+   }
+
+   return 0;
+}
+
+int ptex_fun_horiz(float u,float v,GzColor& color)
+{
+   if ( ((int) floor(v*16.f)) % 2 == 0 ) {
+      color[0] = 1.f;
+      color[1] = 0.f;
+      color[2] = 0.f;
+   } else {
+      color[0] = 0.f;
+      color[1] = 0.f;
+      color[2] = 1.f;
+   }
+
+   return 0;
+}
+
+int ptex_fun_vert(float u,float v,GzColor& color)
+{
+   if ( ((int) floor(u*16.f)) % 2 == 0 ) {
       color[0] = 1.f;
       color[1] = 0.f;
       color[2] = 0.f;

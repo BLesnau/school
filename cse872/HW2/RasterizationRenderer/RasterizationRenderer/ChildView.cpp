@@ -335,7 +335,9 @@ GzColor ambientCoefficient = { 0.1f, 0.1f, 0.1f };
 GzColor diffuseCoefficient = {0.7f, 0.7f, 0.7f};
 
 int tex_fun(float u,float v, GzColor& color);	/* image texture function */
-int ptex_fun(float u,float v, GzColor& color);	/* procedural texture function */
+int ptex_fun_crossed(float u,float v, GzColor& color);	/* procedural texture function */
+int ptex_fun_vert(float u,float v, GzColor& color);
+int ptex_fun_horiz(float u,float v, GzColor& color);
 
 void CChildView::OnTestsApp3()
 {
@@ -440,9 +442,13 @@ void CChildView::OnTestsApp3()
 	if (nTextureFunction == 0)
 		valueListShader[4] = NULL;
 	else if (nTextureFunction == 1)
-		valueListShader[4] = (GzPointer) tex_fun;//tex_fun;
-	else
-		valueListShader[4] = (GzPointer) (ptex_fun);
+		valueListShader[4] = (GzPointer) tex_fun;
+	else if (nTextureFunction == 2)
+		valueListShader[4] = (GzPointer) (ptex_fun_crossed);
+   else if (nTextureFunction == 3)
+      valueListShader[4] = (GzPointer) (ptex_fun_vert);
+   else
+      valueListShader[4] = (GzPointer) (ptex_fun_horiz);
 
 	status |= m_Render->PutAttribute(5, nameListShader, valueListShader);
 	status |= m_Render->PushMatrix(scale);  
